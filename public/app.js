@@ -153,14 +153,40 @@ function renderApp(unlocked) {
     document.querySelectorAll('#nav-list a').forEach((a) => a.classList.remove('active'));
   }
 
-  function showPage(id) {
-    if (id === 'home' || !unlocked[id]) {
+  function renderPage(pageId, subId) {
+    const page = unlocked[pageId];
+    const subpages = page.subpages;
+    const active = subpages.find((s) => s.id === subId) || subpages[0];
+
+    const tabs = subpages
+      .map(
+        (s) =>
+          '<button class="subtab' + (s.id === active.id ? ' active' : '') + '" data-sub="' +
+          s.id + '">' + s.title + '</button>'
+      )
+      .join('');
+
+    content.innerHTML =
+      '<h2>' + page.title + '</h2>\n' +
+      (subpages.length > 1 ? '<div class="subtabs">' + tabs + '</div>\n' : '') +
+      '<div class="subpage-body">' + active.content + '</div>';
+
+    content.querySelectorAll('.subtab').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        window.location.hash = pageId + '/' + btn.dataset.sub;
+      });
+    });
+  }
+
+  function showPage(rawId) {
+    const [pageId, subId] = (rawId || '').split('/');
+    if (!pageId || pageId === 'home' || !unlocked[pageId]) {
       renderHome();
       return;
     }
-    content.innerHTML = unlocked[id].html;
+    renderPage(pageId, subId);
     document.querySelectorAll('#nav-list a').forEach((a) => {
-      a.classList.toggle('active', a.dataset.id === id);
+      a.classList.toggle('active', a.dataset.id === pageId);
     });
   }
 
@@ -175,8 +201,8 @@ function renderApp(unlocked) {
   const initial = window.location.hash ? window.location.hash.slice(1) : 'home';
   showPage(initial);
 
-  // Lets links outside #nav-list (e.g. the header banner, or the home page's own
-  // links) jump to a page too.
+  // Lets links outside #nav-list (e.g. the header banner, the home page's own
+  // links, or a page's own subtabs) jump around too.
   window.addEventListener('hashchange', () => {
     const id = window.location.hash ? window.location.hash.slice(1) : 'home';
     showPage(id);

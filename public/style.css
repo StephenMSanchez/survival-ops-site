@@ -269,6 +269,45 @@ button:hover {
   line-height: 1.65;
 }
 
+.subtabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 24px;
+}
+
+.subtab {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: "Share Tech Mono", monospace;
+  font-size: 0.8rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 8px 14px;
+  border-radius: 3px;
+}
+
+.subtab:hover {
+  border-color: var(--accent-dim);
+  color: var(--text);
+  background: transparent;
+  box-shadow: none;
+}
+
+.subtab.active {
+  background: var(--accent-dim);
+  border-color: var(--accent-dim);
+  color: #04140a;
+  font-weight: 700;
+}
+
+.subtab.active:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
 .content h2 {
   margin-top: 0;
   color: var(--accent);

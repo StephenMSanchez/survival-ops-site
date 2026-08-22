@@ -33,58 +33,82 @@ const DEFAULT_PAGES = [
   {
     id: 'survival',
     title: 'Survival',
-    content:
-      '<h2>Survival</h2>\n' +
-      '<p><em>Placeholder page. Replace this with your own reference material.</em></p>\n' +
-      '<h3>Sections to fill in</h3>\n' +
-      '<ul>\n' +
-      '  <li>Water: sourcing, purification methods, storage</li>\n' +
-      '  <li>Shelter: site selection, construction basics</li>\n' +
-      '  <li>Fire: methods, safety, materials</li>\n' +
-      '  <li>Food: foraging cautions, storage, rationing</li>\n' +
-      '  <li>Navigation: map/compass, landmarks, routes</li>\n' +
-      '</ul>\n' +
-      '<h3>Medical</h3>\n' +
-      '<ul>\n' +
-      '  <li>Trauma basics: bleeding control, splinting</li>\n' +
-      '  <li>Common environmental injuries: heat, cold, dehydration</li>\n' +
-      '</ul>',
+    subpages: [
+      {
+        id: 'overview',
+        title: 'Overview',
+        content:
+          '<p><em>Placeholder page. Replace this with your own reference material.</em></p>\n' +
+          '<ul>\n' +
+          '  <li>Water: sourcing, purification methods, storage</li>\n' +
+          '  <li>Shelter: site selection, construction basics</li>\n' +
+          '  <li>Fire: methods, safety, materials</li>\n' +
+          '  <li>Food: foraging cautions, storage, rationing</li>\n' +
+          '  <li>Navigation: map/compass, landmarks, routes</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'medical',
+        title: 'Medical',
+        content:
+          '<ul>\n' +
+          '  <li>Trauma basics: bleeding control, splinting</li>\n' +
+          '  <li>Common environmental injuries: heat, cold, dehydration</li>\n' +
+          '</ul>',
+      },
+    ],
   },
   {
     id: 'technical',
     title: 'Technical',
-    content:
-      '<h2>Technical</h2>\n' +
-      '<p><em>Placeholder page. Replace this with your own reference material.</em></p>\n' +
-      '<h3>Comms</h3>\n' +
-      '<ul>\n' +
-      '  <li>Communication plan: primary/backup channels, check-in schedule</li>\n' +
-      '  <li>Code words / call signs (if used)</li>\n' +
-      '</ul>',
+    subpages: [
+      {
+        id: 'comms',
+        title: 'Comms',
+        content:
+          '<p><em>Placeholder page. Replace this with your own reference material.</em></p>\n' +
+          '<ul>\n' +
+          '  <li>Communication plan: primary/backup channels, check-in schedule</li>\n' +
+          '  <li>Code words / call signs (if used)</li>\n' +
+          '</ul>',
+      },
+    ],
   },
   {
     id: 'tactical',
     title: 'Tactical',
-    content:
-      '<h2>Tactical</h2>\n' +
-      '<p><em>Placeholder page. Replace this with your own reference material.</em></p>\n' +
-      '<h3>Team Roster</h3>\n' +
-      '<ul>\n' +
-      '  <li>Roster: names, roles, contact info</li>\n' +
-      '  <li>Emergency contacts</li>\n' +
-      '</ul>\n' +
-      '<h3>Ops Plans</h3>\n' +
-      '<ul>\n' +
-      '  <li>Standing operating procedures</li>\n' +
-      '  <li>Rally points and routes</li>\n' +
-      '  <li>After-action review notes</li>\n' +
-      '</ul>\n' +
-      '<h3>Medical</h3>\n' +
-      '<ul>\n' +
-      '  <li>Medical kit contents and locations</li>\n' +
-      '  <li>Team member medical info / allergies (sensitive -- keep minimal)</li>\n' +
-      '  <li>Evacuation criteria and contacts</li>\n' +
-      '</ul>',
+    subpages: [
+      {
+        id: 'team-roster',
+        title: 'Team Roster',
+        content:
+          '<p><em>Placeholder page. Replace this with your own reference material.</em></p>\n' +
+          '<ul>\n' +
+          '  <li>Roster: names, roles, contact info</li>\n' +
+          '  <li>Emergency contacts</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'ops-plans',
+        title: 'Ops Plans',
+        content:
+          '<ul>\n' +
+          '  <li>Standing operating procedures</li>\n' +
+          '  <li>Rally points and routes</li>\n' +
+          '  <li>After-action review notes</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'medical',
+        title: 'Medical',
+        content:
+          '<ul>\n' +
+          '  <li>Medical kit contents and locations</li>\n' +
+          '  <li>Team member medical info / allergies (sensitive -- keep minimal)</li>\n' +
+          '  <li>Evacuation criteria and contacts</li>\n' +
+          '</ul>',
+      },
+    ],
   },
 ];
 
@@ -185,7 +209,7 @@ function writeCredentialsFile(secrets) {
 }
 
 function encryptPageContent(pageKey, page) {
-  const payload = JSON.stringify({ title: page.title, html: page.content });
+  const payload = JSON.stringify({ title: page.title, subpages: page.subpages });
   const { iv, ct } = aesGcmEncrypt(pageKey, Buffer.from(payload, 'utf8'));
   return { iv, ct };
 }
