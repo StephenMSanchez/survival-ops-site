@@ -385,6 +385,25 @@ button:hover {
   box-shadow: none;
 }
 
+.lock-btn.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.lock-btn.locked {
+  opacity: 0.6;
+}
+
+.lock-btn.locked::after {
+  content: "LOCKED";
+  display: block;
+  margin-top: 2px;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--danger);
+  opacity: 0.8;
+}
+
 .content {
   flex: 1;
   padding: 40px 48px;

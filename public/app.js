@@ -143,6 +143,9 @@ function clearSession() {
 function renderApp(state) {
   const { unlocked, manifest } = state;
   const allIds = manifest.map((m) => m.id);
+  // "admin" gets its own dedicated button (styled like Lock Site) instead of
+  // living in the regular page list/nav/home links.
+  const contentIds = allIds.filter((id) => id !== 'admin');
   const titleById = {};
   manifest.forEach((m) => {
     titleById[m.id] = m.title;
@@ -156,6 +159,7 @@ function renderApp(state) {
   const content = document.getElementById('content');
   const modal = document.getElementById('access-modal');
   const modalMessage = document.getElementById('access-modal-message');
+  const adminBtn = document.getElementById('admin-btn');
   navList.innerHTML = '';
 
   if (allIds.length === 0) {
@@ -163,7 +167,7 @@ function renderApp(state) {
     return;
   }
 
-  allIds.forEach((id) => {
+  contentIds.forEach((id) => {
     const li = document.createElement('li');
     const a = document.createElement('a');
     a.href = '#' + id;
@@ -173,6 +177,11 @@ function renderApp(state) {
     li.appendChild(a);
     navList.appendChild(li);
   });
+
+  if (allIds.includes('admin')) {
+    adminBtn.hidden = false;
+    adminBtn.classList.toggle('locked', !unlocked.admin);
+  }
 
   const CLEARANCE_CODES = { survival: 'SURV', technical: 'TECH', tactical: 'TAC' };
 
@@ -197,7 +206,7 @@ function renderApp(state) {
 
   function renderHome() {
     delete appEl.dataset.page;
-    const links = allIds
+    const links = contentIds
       .map((id) => {
         const locked = !unlocked[id];
         return (
@@ -211,6 +220,7 @@ function renderApp(state) {
       '<p>Select a section to continue.</p>\n' +
       '<ul class="home-links">' + links + '</ul>';
     document.querySelectorAll('#nav-list a').forEach((a) => a.classList.remove('active'));
+    adminBtn.classList.remove('active');
   }
 
   function renderPage(pageId, subId) {
@@ -260,19 +270,23 @@ function renderApp(state) {
     document.querySelectorAll('#nav-list a').forEach((a) => {
       a.classList.toggle('active', a.dataset.id === pageId);
     });
+    adminBtn.classList.toggle('active', pageId === 'admin');
   }
 
-  function handleNavClick(e) {
-    const a = e.target.closest('a[data-id]');
-    if (!a) return;
-    e.preventDefault();
-    const id = a.dataset.id;
+  function goToPageOrDeny(id) {
     if (!unlocked[id]) {
       showAccessDenied(id);
       return;
     }
     showPage(id);
     window.location.hash = id;
+  }
+
+  function handleNavClick(e) {
+    const a = e.target.closest('a[data-id]');
+    if (!a) return;
+    e.preventDefault();
+    goToPageOrDeny(a.dataset.id);
   }
 
   navList.addEventListener('click', handleNavClick);
@@ -282,6 +296,7 @@ function renderApp(state) {
   });
   const brandSubtitle = document.querySelector('.brand-subtitle');
   if (brandSubtitle) brandSubtitle.addEventListener('click', handleNavClick);
+  adminBtn.addEventListener('click', () => goToPageOrDeny('admin'));
 
   const initial = window.location.hash ? window.location.hash.slice(1) : 'home';
   showPage(initial);
