@@ -126,7 +126,8 @@ function renderApp(state) {
   });
 
   document.getElementById('gate').hidden = true;
-  document.getElementById('app').hidden = false;
+  const appEl = document.getElementById('app');
+  appEl.hidden = false;
 
   const navList = document.getElementById('nav-list');
   const content = document.getElementById('content');
@@ -172,6 +173,7 @@ function renderApp(state) {
   });
 
   function renderHome() {
+    delete appEl.dataset.page;
     const links = allIds
       .map((id) => {
         const locked = !unlocked[id];
@@ -189,6 +191,7 @@ function renderApp(state) {
   }
 
   function renderPage(pageId, subId) {
+    appEl.dataset.page = pageId;
     const page = unlocked[pageId];
 
     if (!page) {

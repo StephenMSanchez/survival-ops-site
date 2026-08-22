@@ -106,6 +106,20 @@ body {
   display: none !important;
 }
 
+/* Per-page colorway: only the nav/content area shifts (scoped to #app, not
+   body), so the header banner keeps a constant brand green regardless of
+   which page is open. Tactical intentionally has no override -- it uses the
+   same green as the rest of the site. */
+#app[data-page="survival"] {
+  --accent: #d98a3f;
+  --accent-dim: #a05f26;
+}
+
+#app[data-page="technical"] {
+  --accent: #3fb6c4;
+  --accent-dim: #256e79;
+}
+
 .nav li a.locked {
   color: var(--muted);
   opacity: 0.7;
