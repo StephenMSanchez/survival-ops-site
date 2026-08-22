@@ -38,13 +38,10 @@ jobs:
 
       - name: Build site
         env:
-          SITE_ADMIN_PASSCODE: ${{ secrets.SITE_ADMIN_PASSCODE }}
+          SITE_USERS_JSON: ${{ secrets.SITE_USERS_JSON }}
           SITE_TOTP_SECRET_BASE32: ${{ secrets.SITE_TOTP_SECRET_BASE32 }}
           SITE_TOTP_PERIOD_SECONDS: ${{ secrets.SITE_TOTP_PERIOD_SECONDS }}
           SITE_TOTP_DIGITS: ${{ secrets.SITE_TOTP_DIGITS }}
-          SITE_PAGE_SURVIVAL_PASSCODE: ${{ secrets.SITE_PAGE_SURVIVAL_PASSCODE }}
-          SITE_PAGE_TACTICAL_PASSCODE: ${{ secrets.SITE_PAGE_TACTICAL_PASSCODE }}
-          SITE_PAGE_TECHNICAL_PASSCODE: ${{ secrets.SITE_PAGE_TECHNICAL_PASSCODE }}
         run: node build.js
 
       - name: Upload Pages artifact

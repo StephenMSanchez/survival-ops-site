@@ -265,11 +265,13 @@ body {
 
 #gate-form {
   display: flex;
+  flex-direction: column;
   gap: 8px;
 }
 
+input[type="text"],
 input[type="password"] {
-  flex: 1;
+  width: 100%;
   padding: 10px 12px;
   border-radius: 3px;
   border: 1px solid var(--border);
@@ -280,6 +282,7 @@ input[type="password"] {
   letter-spacing: 0.05em;
 }
 
+input[type="text"]:focus,
 input[type="password"]:focus {
   outline: none;
   border-color: var(--accent-dim);

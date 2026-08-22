@@ -19,8 +19,9 @@
   <div id="gate" class="gate">
     <div class="gate-card">
       <h1>Restricted Access</h1>
-      <p class="muted">Enter a passcode to continue. A page code unlocks one page; the admin code unlocks everything; the rotating code unlocks everything for a limited time.</p>
+      <p class="muted">Log in with your username and passcode to see the sections you're cleared for. Leave username blank and enter the rotating code instead for full temporary access.</p>
       <form id="gate-form" autocomplete="off">
+        <input id="username-input" type="text" inputmode="text" placeholder="Username" autocomplete="off" />
         <input id="passcode-input" type="password" inputmode="text" placeholder="Passcode" autocomplete="off" required />
         <button type="submit">Unlock</button>
       </form>

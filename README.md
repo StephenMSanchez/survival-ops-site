@@ -6,14 +6,20 @@ just a static site you deploy to GitHub Pages or Vercel.
 
 ## How access works
 
-There are three tiers of passcode:
+There are two ways in:
 
-1. **Per-page codes.** Each page (Survival, Tactical, Technical) has its own
-   code. Someone with only that code can see only that page.
-2. **Admin code.** One code that unlocks every page.
-3. **Rotating code.** A 6-digit code that changes every 30 minutes, generated the
-   same way a 2FA app generates codes (TOTP, RFC 6238). It unlocks every page,
-   but only for as long as it's valid.
+1. **Username + passcode.** Each person has their own login, and their own
+   list of pages they're cleared for (`pages: ["survival"]`), or full access
+   (`allPages: true`). Both the username and passcode must be exactly right --
+   the decryption key is derived from the two together, not the passcode alone.
+   Someone with a valid login always sees every page in the menu, but a page
+   they're not cleared for shows an "Access Denied" prompt instead of its
+   content when they try to open it.
+2. **Rotating code.** A 6-digit code that changes every 30 minutes, generated the
+   same way a 2FA app generates codes (TOTP, RFC 6238). Leave the username field
+   blank and enter it in the passcode field. It unlocks every page, but only for
+   as long as it's valid -- useful as an admin/emergency fallback that isn't
+   tied to a specific person's login.
 
 This isn't done with a login form that just hides content with JavaScript --
 each page's actual content is AES-256-GCM encrypted, and the encryption key is
@@ -29,19 +35,21 @@ npm install
 node build.js
 ```
 
-The first run has no `secrets.json`, so it **bootstraps one for you**: random
-per-page passcodes, a random admin passcode, and a random TOTP secret for the
-rotating code. It prints nothing sensitive to the terminal -- instead it writes
-two files (both gitignored, never commit them):
+The first run has no `secrets.json`, so it **bootstraps one for you**: a random
+passcode per default page (username = that page's id), an `admin` user with
+`allPages: true`, and a random TOTP secret for the rotating code. It prints
+nothing sensitive to the terminal -- instead it writes two files (both
+gitignored, never commit them):
 
 - `secrets.json` -- machine-readable, used by `build.js` on every future run.
-- `CREDENTIALS.txt` -- human-readable, lists every passcode so you can hand them
-  out. Also generates `totp-qr.png`, a QR code you can scan into an authenticator
-  app (Google Authenticator, Authy, 1Password, etc.) to get the rotating code.
+- `CREDENTIALS.txt` -- human-readable, lists every username/passcode so you can
+  hand them out. Also generates `totp-qr.png`, a QR code you can scan into an
+  authenticator app (Google Authenticator, Authy, 1Password, etc.) to get the
+  rotating code.
 
-Open `CREDENTIALS.txt` to see what was generated, distribute the relevant codes
-to each person, then **delete or secure `CREDENTIALS.txt`** once you've done
-that -- it's the one file that lists everything in plaintext.
+Open `CREDENTIALS.txt` to see what was generated, distribute the relevant
+logins to each person, then **delete or secure `CREDENTIALS.txt`** once you've
+done that -- it's the one file that lists everything in plaintext.
 
 To preview locally:
 
@@ -64,16 +72,35 @@ originally). To change a page's content:
 4. Redeploy (see below).
 
 To add a page or rename one, edit the `pages` array in `secrets.json` (each
-entry needs a unique `id`, a `title`, `content`, and a `passcode`), then rebuild.
-Since editing is just you, occasionally, there's no in-browser editor -- you (or
-you working with Claude) edit `secrets.json` and rebuild.
+entry needs a unique `id`, a `title`, and `subpages`), then rebuild. A page's
+`subpages` array is what the tabs at the top of that page are built from --
+each needs a unique `id`, `title`, and `content` (raw HTML). Since editing is
+just you, occasionally, there's no in-browser editor -- you (or you working
+with Claude) edit `secrets.json` and rebuild.
 
-## Changing passcodes
+## Managing logins and access
 
-Edit the relevant `passcode` field in `secrets.json` (a page's own passcode, or
-`admin.passcode`), then run `node build.js`. To rotate the TOTP secret, delete
-`totp.base32Secret` and let a fresh one bootstrap, or generate your own 20-byte
-random value and base32-encode it.
+Each entry in the `users` array in `secrets.json` is one login:
+
+```json
+{ "username": "alice", "passcode": "...", "pages": ["survival", "tactical"] }
+```
+
+- `pages` is the list of page `id`s that user can see the content of. Everyone
+  sees every page in the menu regardless; pages outside their `pages` list show
+  an "Access Denied" message instead of content.
+- Use `"allPages": true` instead of `pages` for a login that should see
+  everything (like the bootstrapped `admin` user) -- this way you don't have to
+  update every admin-level login when you add a new page.
+- To add a person, add a new entry with a new `username` and a random
+  `passcode`. To revoke someone, delete their entry (or change their
+  `passcode`) and rebuild -- their old login stops working immediately on the
+  next deploy.
+- To change what an existing person can see, edit their `pages` array and
+  rebuild.
+
+To rotate the TOTP secret, delete `totp.base32Secret` and let a fresh one
+bootstrap, or generate your own 20-byte random value and base32-encode it.
 
 ## Deploying
 
@@ -90,18 +117,20 @@ To use it:
 1. Push this repo to GitHub.
 2. In **Settings -> Pages**, set the source to "GitHub Actions".
 3. In **Settings -> Secrets and variables -> Actions**, add these repository
-   secrets (copy the values from your local `CREDENTIALS.txt` / `secrets.json`):
-   - `SITE_ADMIN_PASSCODE`
+   secrets:
+   - `SITE_USERS_JSON` -- the whole `users` array from your local
+     `secrets.json`, as a single-line JSON string, e.g.
+     `[{"username":"admin","passcode":"...","allPages":true},{"username":"survival","passcode":"...","pages":["survival"]}]`
    - `SITE_TOTP_SECRET_BASE32`
    - `SITE_TOTP_PERIOD_SECONDS` (e.g. `1800`)
    - `SITE_TOTP_DIGITS` (e.g. `6`)
-   - `SITE_PAGE_SURVIVAL_PASSCODE`
-   - `SITE_PAGE_TACTICAL_PASSCODE`
-   - `SITE_PAGE_TECHNICAL_PASSCODE`
 4. **Do not commit `secrets.json`.** In CI, `build.js` reads these environment
-   variables directly instead (see the "CI mode" branch in `build.js`).
-   If you added/renamed pages, update both the workflow's `env:` block and the
-   secret names to match (`SITE_PAGE_<ID-IN-CAPS-WITH-UNDERSCORES>_PASSCODE`).
+   variables directly instead (see the "CI mode" branch in `build.js`); page
+   content in CI mode always comes from `DEFAULT_PAGES` in `build.js` itself
+   (not `secrets.json`, which isn't in the repo), so if you edit page content
+   or add/rename pages, update `DEFAULT_PAGES` in `build.js` too and commit it.
+   Whenever you add, remove, or change a user's access, update
+   `SITE_USERS_JSON` to match.
 5. Run the workflow once manually (Actions tab -> "Rebuild and deploy site" ->
    "Run workflow") to do the first deploy.
 
@@ -134,8 +163,9 @@ run `npm run serve` and use `http://localhost:8080` instead).
 ## Security model and its limits
 
 **What this protects against:** someone who has the URL/files but not a valid
-passcode cannot read page content, because it's actually encrypted, not just
-hidden. Different codes reveal different subsets of pages, as configured.
+username+passcode (or a currently-valid rotating code) cannot read page
+content, because it's actually encrypted, not just hidden. Different logins
+unlock different subsets of pages, as configured per user.
 
 **What this does NOT protect against:**
 
@@ -149,9 +179,10 @@ hidden. Different codes reveal different subsets of pages, as configured.
   what they see.** This system controls initial access, not what someone does
   with content after they've unlocked it. Don't rely on it for anything where
   that distinction matters.
-- **Server-side access logging/revocation.** There's no server, so there's no
-  way to see who accessed what, or to instantly revoke one person's code without
-  rebuilding and redeploying with a new passcode for them.
+- **Server-side access logging.** There's no server, so there's no way to see
+  who accessed what, or when. Revoking one person is easier than before, though
+  -- delete their entry from `users` (or change their passcode) and rebuild;
+  nobody else's login is affected.
 - **The rotating code's freshness depends entirely on the periodic rebuild
   running.** If the GitHub Action stops running (disabled, repo archived, quota
   exhausted), the rotating code will eventually stop working until the next

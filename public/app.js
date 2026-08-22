@@ -48,29 +48,50 @@ async function aesGcmDecryptToBytes(key, ivB64, ctB64) {
   return new Uint8Array(ptBuf);
 }
 
-// Attempts to unlock a single page's data with the given passcode.
-// Returns {title, html} on success, or null if this passcode doesn't unlock this page.
-async function tryUnlockPage(passcode, pageData) {
+// Decrypts a page's content using an already-derived key-encryption-key
+// against one specific wrapped entry. Returns {title, subpages} on success,
+// or null if that entry doesn't unwrap with this key (wrong secret).
+async function tryWrappedEntry(kek, wrapped, pageData) {
+  try {
+    const pageKeyBytes = await aesGcmDecryptToBytes(kek, wrapped.iv, wrapped.ct);
+    const pageKey = await crypto.subtle.importKey('raw', pageKeyBytes, { name: 'AES-GCM' }, false, ['decrypt']);
+    const contentBytes = await aesGcmDecryptToBytes(pageKey, pageData.content.iv, pageData.content.ct);
+    return JSON.parse(new TextDecoder().decode(contentBytes));
+  } catch (e) {
+    return null;
+  }
+}
+
+// Username+passcode login: only bothers trying the one wrapped entry that
+// was built for this exact username (if this page grants it access at all),
+// deriving the key from "username:passcode" together -- both must be right.
+async function tryUnlockPageAsUser(username, passcode, pageData) {
+  const wrapped = pageData.wrapped.find((w) => w.context === 'user:' + username);
+  if (!wrapped) return null;
+  const baseSalt = b64ToBytes(pageData.salt);
+  const salt = contextSaltBytes(baseSalt, wrapped.context);
+  const kek = await deriveAesKey(username + ':' + passcode, salt);
+  return tryWrappedEntry(kek, wrapped, pageData);
+}
+
+// Rotating-code login (no username): tries the passcode alone against each
+// totp: entry (one per tolerated time window).
+async function tryUnlockPageAsTotp(passcode, pageData) {
   const baseSalt = b64ToBytes(pageData.salt);
   for (const w of pageData.wrapped) {
-    try {
-      const salt = contextSaltBytes(baseSalt, w.context);
-      const kek = await deriveAesKey(passcode, salt);
-      const pageKeyBytes = await aesGcmDecryptToBytes(kek, w.iv, w.ct);
-      const pageKey = await crypto.subtle.importKey('raw', pageKeyBytes, { name: 'AES-GCM' }, false, ['decrypt']);
-      const contentBytes = await aesGcmDecryptToBytes(pageKey, pageData.content.iv, pageData.content.ct);
-      return JSON.parse(new TextDecoder().decode(contentBytes));
-    } catch (e) {
-      // Wrong passcode for this wrapped entry -- try the next one.
-      continue;
-    }
+    if (!w.context.startsWith('totp:')) continue;
+    const salt = contextSaltBytes(baseSalt, w.context);
+    const kek = await deriveAesKey(passcode, salt);
+    const result = await tryWrappedEntry(kek, w, pageData);
+    if (result) return result;
   }
   return null;
 }
 
-async function attemptUnlock(passcode) {
+async function attemptUnlock(username, passcode) {
   const manifestRes = await fetch('pages/manifest.json', { cache: 'no-store' });
   const manifest = await manifestRes.json();
+  const useUsername = username.trim().length > 0;
 
   // Fetch/decrypt concurrently, but Promise.all preserves manifest order in its
   // results regardless of which one finishes first -- unlike assigning into an
@@ -80,7 +101,9 @@ async function attemptUnlock(passcode) {
     manifest.map(async (entry) => {
       const res = await fetch('pages/' + entry.id + '.json', { cache: 'no-store' });
       const pageData = await res.json();
-      const result = await tryUnlockPage(passcode, pageData);
+      const result = useUsername
+        ? await tryUnlockPageAsUser(username.trim(), passcode, pageData)
+        : await tryUnlockPageAsTotp(passcode, pageData);
       return { id: entry.id, result };
     })
   );
@@ -292,25 +315,27 @@ async function init() {
   const form = document.getElementById('gate-form');
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const input = document.getElementById('passcode-input');
-    const passcode = input.value;
+    const usernameInput = document.getElementById('username-input');
+    const passcodeInput = document.getElementById('passcode-input');
+    const username = usernameInput.value;
+    const passcode = passcodeInput.value;
     const submitBtn = form.querySelector('button');
     submitBtn.disabled = true;
     document.getElementById('gate-error').hidden = true;
 
     try {
-      const { unlocked, manifest } = await attemptUnlock(passcode);
+      const { unlocked, manifest } = await attemptUnlock(username, passcode);
       if (Object.keys(unlocked).length === 0) {
-        showGateError('Invalid passcode.');
-        input.value = '';
-        input.focus();
+        showGateError(username.trim() ? 'Invalid username or passcode.' : 'Invalid rotating code.');
+        passcodeInput.value = '';
+        passcodeInput.focus();
         return;
       }
       const state = { unlocked, manifest };
       saveSession(state);
       renderApp(state);
     } catch (err) {
-      showGateError('Something went wrong checking that code. Try again.');
+      showGateError('Something went wrong checking that login. Try again.');
     } finally {
       submitBtn.disabled = false;
     }

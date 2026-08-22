@@ -123,25 +123,17 @@ function randomPasscode(bytes = 9) {
 
 function loadOrBootstrapSecrets() {
   // CI path: assemble secrets.json from environment variables if present.
-  if (process.env.SITE_ADMIN_PASSCODE) {
+  if (process.env.SITE_USERS_JSON) {
     log('Assembling secrets from environment variables (CI mode).');
-    const pages = DEFAULT_PAGES.map((p) => {
-      const envKey = 'SITE_PAGE_' + p.id.toUpperCase().replace(/-/g, '_') + '_PASSCODE';
-      const passcode = process.env[envKey];
-      if (!passcode) {
-        throw new Error('Missing environment variable ' + envKey);
-      }
-      return { ...p, passcode };
-    });
     return {
-      admin: { passcode: process.env.SITE_ADMIN_PASSCODE },
+      users: JSON.parse(process.env.SITE_USERS_JSON),
       totp: {
         base32Secret: process.env.SITE_TOTP_SECRET_BASE32,
         periodSeconds: Number(process.env.SITE_TOTP_PERIOD_SECONDS || 1800),
         digits: Number(process.env.SITE_TOTP_DIGITS || 6),
         accessAllPages: true,
       },
-      pages,
+      pages: DEFAULT_PAGES,
     };
   }
 
@@ -153,14 +145,21 @@ function loadOrBootstrapSecrets() {
   log('No secrets.json found -- bootstrapping new random credentials.');
   const totpSecretBytes = crypto.randomBytes(20); // 160-bit, standard TOTP secret size
   const secrets = {
-    admin: { passcode: randomPasscode(12) },
+    users: [
+      { username: 'admin', passcode: randomPasscode(12), allPages: true },
+      ...DEFAULT_PAGES.map((p) => ({
+        username: p.id,
+        passcode: randomPasscode(9),
+        pages: [p.id],
+      })),
+    ],
     totp: {
       base32Secret: base32Encode(totpSecretBytes),
       periodSeconds: 1800, // 30 minutes
       digits: 6,
       accessAllPages: true,
     },
-    pages: DEFAULT_PAGES.map((p) => ({ ...p, passcode: randomPasscode(9) })),
+    pages: DEFAULT_PAGES,
   };
 
   fs.writeFileSync(SECRETS_PATH, JSON.stringify(secrets, null, 2));
@@ -182,18 +181,19 @@ function writeCredentialsFile(secrets) {
   lines.push('SURVIVAL/OPS SITE -- ACCESS CREDENTIALS');
   lines.push('Generated: ' + new Date().toISOString());
   lines.push('');
-  lines.push('KEEP THIS FILE PRIVATE. Distribute individual codes to team members');
+  lines.push('KEEP THIS FILE PRIVATE. Distribute individual logins to team members');
   lines.push('over a secure channel (not email/SMS in plaintext if you can avoid it).');
   lines.push('');
-  lines.push('ADMIN PASSCODE (unlocks all pages):');
-  lines.push('  ' + secrets.admin.passcode);
-  lines.push('');
-  lines.push('PER-PAGE PASSCODES (each unlocks only that one page):');
-  for (const p of secrets.pages) {
-    lines.push('  ' + p.title + ' (' + p.id + '): ' + p.passcode);
+  lines.push('USER LOGINS (username + passcode, each with its own page access):');
+  for (const u of secrets.users) {
+    const access = u.allPages ? 'ALL PAGES' : (u.pages || []).join(', ') || '(none)';
+    lines.push('  ' + u.username + ' / ' + u.passcode + '  -- access: ' + access);
   }
   lines.push('');
-  lines.push('ROTATING ACCESS CODE (TOTP, changes every ' + secrets.totp.periodSeconds / 60 + ' minutes, unlocks all pages):');
+  lines.push('To change what a user can see, edit their "pages" array (or "allPages": true');
+  lines.push('for full access) in secrets.json, under "users", then rebuild.');
+  lines.push('');
+  lines.push('ROTATING ACCESS CODE (TOTP, changes every ' + secrets.totp.periodSeconds / 60 + ' minutes, unlocks all pages, no username needed):');
   lines.push('  Add this to an authenticator app (Google Authenticator, Authy, 1Password, etc.)');
   lines.push('  Either scan totp-qr.png (in this same folder after build) or enter manually:');
   lines.push('    Secret (base32): ' + secrets.totp.base32Secret);
@@ -219,6 +219,18 @@ function wrapKeyForPasscode(pageKey, passcode, baseSalt, context) {
   const kek = deriveKey(passcode, salt);
   const { iv, ct } = aesGcmEncrypt(kek, pageKey);
   return { context, iv, ct };
+}
+
+// Users authenticate with a username + passcode pair. Both must be exactly
+// right: the derivation key is "username:passcode", not just the passcode,
+// so knowing one user's passcode (or seeing another user's username in a
+// page's wrapped-entry list) doesn't help unlock a different user's login.
+function wrapKeyForUser(pageKey, user, baseSalt) {
+  return wrapKeyForPasscode(pageKey, user.username + ':' + user.passcode, baseSalt, 'user:' + user.username);
+}
+
+function userGrantsPage(user, pageId) {
+  return user.allPages === true || (Array.isArray(user.pages) && user.pages.includes(pageId));
 }
 
 function buildTotpWrappedEntries(pageKey, baseSalt, totpConfig) {
@@ -265,8 +277,11 @@ function main() {
     const content = encryptPageContent(pageKey, page);
 
     const wrapped = [];
-    wrapped.push(wrapKeyForPasscode(pageKey, page.passcode, baseSalt, 'page'));
-    wrapped.push(wrapKeyForPasscode(pageKey, secrets.admin.passcode, baseSalt, 'admin'));
+    for (const user of secrets.users || []) {
+      if (userGrantsPage(user, page.id)) {
+        wrapped.push(wrapKeyForUser(pageKey, user, baseSalt));
+      }
+    }
 
     const totpGrantsThisPage =
       secrets.totp &&
@@ -320,7 +335,7 @@ function main() {
     }
   }
 
-  if (!fs.existsSync(CREDENTIALS_PATH) && !process.env.SITE_ADMIN_PASSCODE) {
+  if (!fs.existsSync(CREDENTIALS_PATH) && !process.env.SITE_USERS_JSON) {
     writeCredentialsFile(secrets);
   }
 }
