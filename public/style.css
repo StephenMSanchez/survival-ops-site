@@ -69,6 +69,18 @@ body {
   line-height: 1.1;
 }
 
+.brand-title a {
+  color: inherit;
+  text-shadow: inherit;
+  text-decoration: none;
+  transition: filter 0.15s ease;
+}
+
+.brand-title a:hover,
+.brand-title a:focus-visible {
+  filter: brightness(1.25);
+}
+
 .brand-subtitle {
   margin-top: 6px;
   font-family: "Share Tech Mono", monospace;
@@ -273,4 +285,36 @@ button:hover {
 
 .empty-state {
   color: var(--muted);
+}
+
+.home-links {
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 320px;
+}
+
+.home-links a {
+  display: block;
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--accent-dim);
+  border-radius: 3px;
+  background: var(--panel);
+  color: var(--text);
+  text-decoration: none;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.home-links a:hover,
+.home-links a:focus-visible {
+  border-left-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 12px rgba(70, 224, 122, 0.2);
 }

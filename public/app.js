@@ -136,10 +136,23 @@ function renderApp(unlocked) {
     navList.appendChild(li);
   });
 
+  function renderHome() {
+    const links = ids
+      .map((id) => '<li><a href="#' + id + '" data-id="' + id + '">' + unlocked[id].title + '</a></li>')
+      .join('');
+    content.innerHTML =
+      '<h2>STAC-OPS</h2>\n' +
+      '<p>Select a section to continue.</p>\n' +
+      '<ul class="home-links">' + links + '</ul>';
+    document.querySelectorAll('#nav-list a').forEach((a) => a.classList.remove('active'));
+  }
+
   function showPage(id) {
-    const page = unlocked[id];
-    if (!page) return;
-    content.innerHTML = page.html;
+    if (id === 'home' || !unlocked[id]) {
+      renderHome();
+      return;
+    }
+    content.innerHTML = unlocked[id].html;
     document.querySelectorAll('#nav-list a').forEach((a) => {
       a.classList.toggle('active', a.dataset.id === id);
     });
@@ -153,13 +166,14 @@ function renderApp(unlocked) {
     window.location.hash = a.dataset.id;
   });
 
-  const initial = window.location.hash ? window.location.hash.slice(1) : ids[0];
-  showPage(unlocked[initial] ? initial : ids[0]);
+  const initial = window.location.hash ? window.location.hash.slice(1) : 'home';
+  showPage(initial);
 
-  // Lets links outside #nav-list (e.g. the header banner) jump to a page too.
+  // Lets links outside #nav-list (e.g. the header banner, or the home page's own
+  // links) jump to a page too.
   window.addEventListener('hashchange', () => {
-    const id = window.location.hash ? window.location.hash.slice(1) : ids[0];
-    showPage(unlocked[id] ? id : ids[0]);
+    const id = window.location.hash ? window.location.hash.slice(1) : 'home';
+    showPage(id);
   });
 
   document.getElementById('lock-btn').addEventListener('click', () => {
