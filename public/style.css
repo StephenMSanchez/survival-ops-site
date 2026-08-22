@@ -90,6 +90,10 @@ body {
   text-shadow: 0 0 8px rgba(70, 224, 122, 0.6);
 }
 
+.gate[hidden], .app[hidden] {
+  display: none !important;
+}
+
 .gate {
   min-height: calc(100vh - 110px);
   display: flex;
