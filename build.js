@@ -254,8 +254,37 @@ function buildTotpWrappedEntries(pageKey, baseSalt, totpConfig) {
   return entries;
 }
 
+// Builds the Admin page's content fresh from the current users list on every
+// build, so it's never stale relative to secrets.json. Admin-level (allPages)
+// users are left out of the listing -- this shows the logins an admin
+// manages, not other admins' own credentials.
+function buildAdminPageContent(secrets) {
+  const rows = (secrets.users || [])
+    .filter((u) => !u.allPages)
+    .map((u) => {
+      const access = (u.pages || []).join(', ') || '(none)';
+      return '  <li><strong>' + u.username + '</strong> / ' + u.passcode + ' &mdash; access: ' + access + '</li>';
+    })
+    .join('\n');
+
+  return (
+    '<p><em>Visible only to admin-level logins. Does not list other admin passcodes.</em></p>\n' +
+    '<ul>\n' + (rows || '  <li>No non-admin users configured.</li>') + '\n</ul>'
+  );
+}
+
 function main() {
   const secrets = loadOrBootstrapSecrets();
+
+  // Synthesized fresh from secrets.users on every build -- not something you
+  // edit directly in secrets.json's pages array. Access follows the normal
+  // userGrantsPage() rule below, so only allPages users see it by default.
+  const adminPage = {
+    id: 'admin',
+    title: 'Admin',
+    subpages: [{ id: 'users', title: 'Users', content: buildAdminPageContent(secrets) }],
+  };
+  secrets.pages = [...secrets.pages, adminPage];
 
   if (fs.existsSync(DIST_DIR)) {
     fs.rmSync(DIST_DIR, { recursive: true, force: true });
