@@ -1,0 +1,146 @@
+:root {
+  color-scheme: dark;
+  --bg: #14181c;
+  --panel: #1c2126;
+  --border: #2b323a;
+  --text: #e6e9ec;
+  --muted: #93a0ab;
+  --accent: #4f9d69;
+  --danger: #d9695f;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.muted { color: var(--muted); }
+
+.gate {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.gate-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+}
+
+.gate-card h1 {
+  margin: 0 0 8px;
+  font-size: 1.3rem;
+}
+
+.gate-card p {
+  margin: 0 0 20px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+#gate-form {
+  display: flex;
+  gap: 8px;
+}
+
+input[type="password"] {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #101417;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+button {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent);
+  color: #08130c;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:hover { filter: brightness(1.08); }
+
+.error {
+  color: var(--danger);
+  margin-top: 14px;
+  font-size: 0.85rem;
+}
+
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+.nav {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  padding: 20px 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+}
+
+.nav li a {
+  display: block;
+  padding: 9px 10px;
+  border-radius: 6px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.92rem;
+  margin-bottom: 2px;
+}
+
+.nav li a:hover, .nav li a.active {
+  background: #262d34;
+}
+
+.lock-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.content {
+  flex: 1;
+  padding: 40px 48px;
+  max-width: 780px;
+  line-height: 1.6;
+}
+
+.content h2 { margin-top: 0; }
+
+.empty-state {
+  color: var(--muted);
+}

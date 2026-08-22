@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Access Required</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="gate" class="gate">
+    <div class="gate-card">
+      <h1>Restricted Access</h1>
+      <p class="muted">Enter a passcode to continue. A page code unlocks one page; the admin code unlocks everything; the rotating code unlocks everything for a limited time.</p>
+      <form id="gate-form" autocomplete="off">
+        <input id="passcode-input" type="password" inputmode="text" placeholder="Passcode" autocomplete="off" required />
+        <button type="submit">Unlock</button>
+      </form>
+      <p id="gate-error" class="error" hidden></p>
+    </div>
+  </div>
+
+  <div id="app" class="app" hidden>
+    <nav id="nav" class="nav">
+      <div class="nav-title">Menu</div>
+      <ul id="nav-list"></ul>
+      <button id="lock-btn" class="lock-btn" type="button">Lock site</button>
+    </nav>
+    <main id="content" class="content"></main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

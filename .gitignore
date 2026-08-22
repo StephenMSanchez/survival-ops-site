@@ -1,0 +1,5 @@
+node_modules/
+secrets.json
+CREDENTIALS.txt
+dist/
+totp-qr.png

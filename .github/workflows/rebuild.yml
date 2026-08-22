@@ -1,0 +1,58 @@
+name: Rebuild and deploy site
+
+on:
+  schedule:
+    # Every 15 minutes -- keeps the rotating (TOTP) code's valid window fresh.
+    # (The TOTP period itself defaults to 30 min; building twice as often gives margin.)
+    - cron: '*/15 * * * *'
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Build site
+        env:
+          SITE_ADMIN_PASSCODE: ${{ secrets.SITE_ADMIN_PASSCODE }}
+          SITE_TOTP_SECRET_BASE32: ${{ secrets.SITE_TOTP_SECRET_BASE32 }}
+          SITE_TOTP_PERIOD_SECONDS: ${{ secrets.SITE_TOTP_PERIOD_SECONDS }}
+          SITE_TOTP_DIGITS: ${{ secrets.SITE_TOTP_DIGITS }}
+          SITE_PAGE_SURVIVAL_BASICS_PASSCODE: ${{ secrets.SITE_PAGE_SURVIVAL_BASICS_PASSCODE }}
+          SITE_PAGE_MEDICAL_FIRST_AID_PASSCODE: ${{ secrets.SITE_PAGE_MEDICAL_FIRST_AID_PASSCODE }}
+          SITE_PAGE_TEAM_ROSTER_COMMS_PASSCODE: ${{ secrets.SITE_PAGE_TEAM_ROSTER_COMMS_PASSCODE }}
+          SITE_PAGE_OPS_PLANS_CHECKLISTS_PASSCODE: ${{ secrets.SITE_PAGE_OPS_PLANS_CHECKLISTS_PASSCODE }}
+        run: node build.js
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
