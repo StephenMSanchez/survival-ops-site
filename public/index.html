@@ -13,7 +13,7 @@
   <header class="brand-banner">
     <div class="scanline"></div>
     <div class="brand-title"><a href="#home">STAC&#8209;OPS</a></div>
-    <div class="brand-subtitle"><a href="#survival">SURVIVAL</a> &middot; <a href="#technical">TECHNICAL</a> &middot; <a href="#tactical">TACTICAL</a></div>
+    <div class="brand-subtitle"><a href="#survival" data-id="survival">SURVIVAL</a> &middot; <a href="#technical" data-id="technical">TECHNICAL</a> &middot; <a href="#tactical" data-id="tactical">TACTICAL</a></div>
   </header>
 
   <div id="gate" class="gate">
@@ -35,6 +35,14 @@
       <button id="lock-btn" class="lock-btn" type="button">Lock site</button>
     </nav>
     <main id="content" class="content"></main>
+  </div>
+
+  <div id="access-modal" class="modal-overlay" hidden>
+    <div class="modal-box">
+      <p class="modal-title">Access Denied</p>
+      <p id="access-modal-message">You do not have clearance for this section.</p>
+      <button id="access-modal-dismiss" type="button">Dismiss</button>
+    </div>
   </div>
 
   <script src="app.js"></script>

@@ -89,12 +89,12 @@ async function attemptUnlock(passcode) {
   for (const { id, result } of results) {
     if (result) unlocked[id] = result;
   }
-  return unlocked;
+  return { unlocked, manifest };
 }
 
-function saveSession(unlocked) {
+function saveSession(state) {
   try {
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify(unlocked));
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify(state));
   } catch (e) {
     // sessionStorage unavailable -- unlock still works for this page load, just won't persist.
   }
@@ -117,34 +117,62 @@ function clearSession() {
   }
 }
 
-function renderApp(unlocked) {
-  const ids = Object.keys(unlocked);
+function renderApp(state) {
+  const { unlocked, manifest } = state;
+  const allIds = manifest.map((m) => m.id);
+  const titleById = {};
+  manifest.forEach((m) => {
+    titleById[m.id] = m.title;
+  });
+
   document.getElementById('gate').hidden = true;
   document.getElementById('app').hidden = false;
 
   const navList = document.getElementById('nav-list');
   const content = document.getElementById('content');
+  const modal = document.getElementById('access-modal');
+  const modalMessage = document.getElementById('access-modal-message');
   navList.innerHTML = '';
 
-  if (ids.length === 0) {
-    content.innerHTML = '<p class="empty-state">No pages available for this code.</p>';
+  if (allIds.length === 0) {
+    content.innerHTML = '<p class="empty-state">No pages configured.</p>';
     return;
   }
 
-  ids.forEach((id, idx) => {
+  allIds.forEach((id) => {
     const li = document.createElement('li');
     const a = document.createElement('a');
     a.href = '#' + id;
-    a.textContent = unlocked[id].title;
+    a.textContent = titleById[id];
     a.dataset.id = id;
-    if (idx === 0) a.classList.add('active');
+    if (!unlocked[id]) a.classList.add('locked');
     li.appendChild(a);
     navList.appendChild(li);
   });
 
+  function showAccessDenied(id) {
+    modalMessage.textContent = 'You do not have clearance for ' + titleById[id] + '.';
+    modal.hidden = false;
+  }
+
+  function hideAccessDenied() {
+    modal.hidden = true;
+  }
+
+  document.getElementById('access-modal-dismiss').addEventListener('click', hideAccessDenied);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) hideAccessDenied();
+  });
+
   function renderHome() {
-    const links = ids
-      .map((id) => '<li><a href="#' + id + '" data-id="' + id + '">' + unlocked[id].title + '</a></li>')
+    const links = allIds
+      .map((id) => {
+        const locked = !unlocked[id];
+        return (
+          '<li><a href="#' + id + '" data-id="' + id + '"' + (locked ? ' class="locked"' : '') + '>' +
+          titleById[id] + '</a></li>'
+        );
+      })
       .join('');
     content.innerHTML =
       '<h2>STAC-OPS</h2>\n' +
@@ -155,6 +183,17 @@ function renderApp(unlocked) {
 
   function renderPage(pageId, subId) {
     const page = unlocked[pageId];
+
+    if (!page) {
+      content.innerHTML =
+        '<h2>' + titleById[pageId] + '</h2>\n' +
+        '<div class="access-denied-inline">\n' +
+        '  <p class="access-denied-title">Access Denied</p>\n' +
+        '  <p>You do not have clearance for this section.</p>\n' +
+        '</div>';
+      return;
+    }
+
     const subpages = page.subpages;
     const active = subpages.find((s) => s.id === subId) || subpages[0];
 
@@ -180,7 +219,7 @@ function renderApp(unlocked) {
 
   function showPage(rawId) {
     const [pageId, subId] = (rawId || '').split('/');
-    if (!pageId || pageId === 'home' || !unlocked[pageId]) {
+    if (!pageId || pageId === 'home' || !allIds.includes(pageId)) {
       renderHome();
       return;
     }
@@ -190,19 +229,31 @@ function renderApp(unlocked) {
     });
   }
 
-  navList.addEventListener('click', (e) => {
-    const a = e.target.closest('a');
+  function handleNavClick(e) {
+    const a = e.target.closest('a[data-id]');
     if (!a) return;
     e.preventDefault();
-    showPage(a.dataset.id);
-    window.location.hash = a.dataset.id;
+    const id = a.dataset.id;
+    if (!unlocked[id]) {
+      showAccessDenied(id);
+      return;
+    }
+    showPage(id);
+    window.location.hash = id;
+  }
+
+  navList.addEventListener('click', handleNavClick);
+  // Delegated so it keeps working after renderHome() replaces #content's markup.
+  content.addEventListener('click', (e) => {
+    if (e.target.closest('.home-links')) handleNavClick(e);
   });
+  const brandSubtitle = document.querySelector('.brand-subtitle');
+  if (brandSubtitle) brandSubtitle.addEventListener('click', handleNavClick);
 
   const initial = window.location.hash ? window.location.hash.slice(1) : 'home';
   showPage(initial);
 
-  // Lets links outside #nav-list (e.g. the header banner, the home page's own
-  // links, or a page's own subtabs) jump around too.
+  // Lets links outside #nav-list/#content (e.g. the header banner) jump around too.
   window.addEventListener('hashchange', () => {
     const id = window.location.hash ? window.location.hash.slice(1) : 'home';
     showPage(id);
@@ -223,7 +274,7 @@ function showGateError(message) {
 
 async function init() {
   const cached = loadSession();
-  if (cached && Object.keys(cached).length > 0) {
+  if (cached && cached.unlocked && Object.keys(cached.unlocked).length > 0) {
     renderApp(cached);
     return;
   }
@@ -238,15 +289,16 @@ async function init() {
     document.getElementById('gate-error').hidden = true;
 
     try {
-      const unlocked = await attemptUnlock(passcode);
+      const { unlocked, manifest } = await attemptUnlock(passcode);
       if (Object.keys(unlocked).length === 0) {
         showGateError('Invalid passcode.');
         input.value = '';
         input.focus();
         return;
       }
-      saveSession(unlocked);
-      renderApp(unlocked);
+      const state = { unlocked, manifest };
+      saveSession(state);
+      renderApp(state);
     } catch (err) {
       showGateError('Something went wrong checking that code. Try again.');
     } finally {
