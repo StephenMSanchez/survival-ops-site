@@ -8,9 +8,8 @@ just a static site you deploy to GitHub Pages or Vercel.
 
 There are three tiers of passcode:
 
-1. **Per-page codes.** Each page (Survival Basics, Medical/First Aid, Team Roster
-   & Comms, Ops Plans & Checklists) has its own code. Someone with only that code
-   can see only that page.
+1. **Per-page codes.** Each page (Survival, Tactical, Technical) has its own
+   code. Someone with only that code can see only that page.
 2. **Admin code.** One code that unlocks every page.
 3. **Rotating code.** A 6-digit code that changes every 30 minutes, generated the
    same way a 2FA app generates codes (TOTP, RFC 6238). It unlocks every page,
@@ -96,10 +95,9 @@ To use it:
    - `SITE_TOTP_SECRET_BASE32`
    - `SITE_TOTP_PERIOD_SECONDS` (e.g. `1800`)
    - `SITE_TOTP_DIGITS` (e.g. `6`)
-   - `SITE_PAGE_SURVIVAL_BASICS_PASSCODE`
-   - `SITE_PAGE_MEDICAL_FIRST_AID_PASSCODE`
-   - `SITE_PAGE_TEAM_ROSTER_COMMS_PASSCODE`
-   - `SITE_PAGE_OPS_PLANS_CHECKLISTS_PASSCODE`
+   - `SITE_PAGE_SURVIVAL_PASSCODE`
+   - `SITE_PAGE_TACTICAL_PASSCODE`
+   - `SITE_PAGE_TECHNICAL_PASSCODE`
 4. **Do not commit `secrets.json`.** In CI, `build.js` reads these environment
    variables directly instead (see the "CI mode" branch in `build.js`).
    If you added/renamed pages, update both the workflow's `env:` block and the

@@ -156,6 +156,12 @@ function renderApp(unlocked) {
   const initial = window.location.hash ? window.location.hash.slice(1) : ids[0];
   showPage(unlocked[initial] ? initial : ids[0]);
 
+  // Lets links outside #nav-list (e.g. the header banner) jump to a page too.
+  window.addEventListener('hashchange', () => {
+    const id = window.location.hash ? window.location.hash.slice(1) : ids[0];
+    showPage(unlocked[id] ? id : ids[0]);
+  });
+
   document.getElementById('lock-btn').addEventListener('click', () => {
     clearSession();
     window.location.hash = '';

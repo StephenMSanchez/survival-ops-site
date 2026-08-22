@@ -78,6 +78,18 @@ body {
   text-transform: uppercase;
 }
 
+.brand-subtitle a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+
+.brand-subtitle a:hover,
+.brand-subtitle a:focus-visible {
+  color: var(--accent);
+  text-shadow: 0 0 8px rgba(70, 224, 122, 0.6);
+}
+
 .gate {
   min-height: calc(100vh - 110px);
   display: flex;

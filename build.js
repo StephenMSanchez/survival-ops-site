@@ -31,10 +31,10 @@ const DIST_DIR = path.join(ROOT, 'dist');
 
 const DEFAULT_PAGES = [
   {
-    id: 'survival-basics',
-    title: 'Survival Basics',
+    id: 'survival',
+    title: 'Survival',
     content:
-      '<h2>Survival Basics</h2>\n' +
+      '<h2>Survival</h2>\n' +
       '<p><em>Placeholder page. Replace this with your own reference material.</em></p>\n' +
       '<h3>Sections to fill in</h3>\n' +
       '<ul>\n' +
@@ -43,49 +43,47 @@ const DEFAULT_PAGES = [
       '  <li>Fire: methods, safety, materials</li>\n' +
       '  <li>Food: foraging cautions, storage, rationing</li>\n' +
       '  <li>Navigation: map/compass, landmarks, routes</li>\n' +
-      '</ul>',
-  },
-  {
-    id: 'medical-first-aid',
-    title: 'Medical / First Aid',
-    content:
-      '<h2>Medical / First Aid</h2>\n' +
-      '<p><em>Placeholder page. Replace this with your own reference material.</em></p>\n' +
-      '<h3>Sections to fill in</h3>\n' +
+      '</ul>\n' +
+      '<h3>Medical</h3>\n' +
       '<ul>\n' +
       '  <li>Trauma basics: bleeding control, splinting</li>\n' +
       '  <li>Common environmental injuries: heat, cold, dehydration</li>\n' +
+      '</ul>',
+  },
+  {
+    id: 'tactical',
+    title: 'Tactical',
+    content:
+      '<h2>Tactical</h2>\n' +
+      '<p><em>Placeholder page. Replace this with your own reference material.</em></p>\n' +
+      '<h3>Team Roster</h3>\n' +
+      '<ul>\n' +
+      '  <li>Roster: names, roles, contact info</li>\n' +
+      '  <li>Emergency contacts</li>\n' +
+      '</ul>\n' +
+      '<h3>Ops Plans</h3>\n' +
+      '<ul>\n' +
+      '  <li>Standing operating procedures</li>\n' +
+      '  <li>Rally points and routes</li>\n' +
+      '  <li>After-action review notes</li>\n' +
+      '</ul>\n' +
+      '<h3>Medical</h3>\n' +
+      '<ul>\n' +
       '  <li>Medical kit contents and locations</li>\n' +
       '  <li>Team member medical info / allergies (sensitive -- keep minimal)</li>\n' +
       '  <li>Evacuation criteria and contacts</li>\n' +
       '</ul>',
   },
   {
-    id: 'team-roster-comms',
-    title: 'Team Roster & Comms',
+    id: 'technical',
+    title: 'Technical',
     content:
-      '<h2>Team Roster & Comms</h2>\n' +
+      '<h2>Technical</h2>\n' +
       '<p><em>Placeholder page. Replace this with your own reference material.</em></p>\n' +
-      '<h3>Sections to fill in</h3>\n' +
+      '<h3>Comms</h3>\n' +
       '<ul>\n' +
-      '  <li>Roster: names, roles, contact info</li>\n' +
       '  <li>Communication plan: primary/backup channels, check-in schedule</li>\n' +
-      '  <li>Emergency contacts</li>\n' +
       '  <li>Code words / call signs (if used)</li>\n' +
-      '</ul>',
-  },
-  {
-    id: 'ops-plans-checklists',
-    title: 'Ops Plans & Checklists',
-    content:
-      '<h2>Ops Plans & Checklists</h2>\n' +
-      '<p><em>Placeholder page. Replace this with your own reference material.</em></p>\n' +
-      '<h3>Sections to fill in</h3>\n' +
-      '<ul>\n' +
-      '  <li>Standing operating procedures</li>\n' +
-      '  <li>Gear checklists</li>\n' +
-      '  <li>Rally points and routes</li>\n' +
-      '  <li>After-action review notes</li>\n' +
       '</ul>',
   },
 ];
