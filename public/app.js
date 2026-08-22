@@ -72,17 +72,23 @@ async function attemptUnlock(passcode) {
   const manifestRes = await fetch('pages/manifest.json', { cache: 'no-store' });
   const manifest = await manifestRes.json();
 
-  const unlocked = {};
-  await Promise.all(
+  // Fetch/decrypt concurrently, but Promise.all preserves manifest order in its
+  // results regardless of which one finishes first -- unlike assigning into an
+  // object from inside each async task, which would order keys by completion
+  // time instead of manifest order.
+  const results = await Promise.all(
     manifest.map(async (entry) => {
       const res = await fetch('pages/' + entry.id + '.json', { cache: 'no-store' });
       const pageData = await res.json();
       const result = await tryUnlockPage(passcode, pageData);
-      if (result) {
-        unlocked[entry.id] = result;
-      }
+      return { id: entry.id, result };
     })
   );
+
+  const unlocked = {};
+  for (const { id, result } of results) {
+    if (result) unlocked[id] = result;
+  }
   return unlocked;
 }
 
