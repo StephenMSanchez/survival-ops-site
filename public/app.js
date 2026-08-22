@@ -150,8 +150,15 @@ function renderApp(state) {
     navList.appendChild(li);
   });
 
+  const CLEARANCE_CODES = { survival: 'SURV', technical: 'TECH', tactical: 'TAC' };
+
+  function clearanceMessage(id) {
+    const code = CLEARANCE_CODES[id];
+    return code ? 'You do not have ' + code + ' clearance.' : 'You do not have clearance for ' + titleById[id] + '.';
+  }
+
   function showAccessDenied(id) {
-    modalMessage.textContent = 'You do not have clearance for ' + titleById[id] + '.';
+    modalMessage.textContent = clearanceMessage(id);
     modal.hidden = false;
   }
 
@@ -189,7 +196,7 @@ function renderApp(state) {
         '<h2>' + titleById[pageId] + '</h2>\n' +
         '<div class="access-denied-inline">\n' +
         '  <p class="access-denied-title">Access Denied</p>\n' +
-        '  <p>You do not have clearance for this section.</p>\n' +
+        '  <p>' + clearanceMessage(pageId) + '</p>\n' +
         '</div>';
       return;
     }
