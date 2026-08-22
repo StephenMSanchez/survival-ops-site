@@ -51,6 +51,18 @@ const DEFAULT_PAGES = [
       '</ul>',
   },
   {
+    id: 'technical',
+    title: 'Technical',
+    content:
+      '<h2>Technical</h2>\n' +
+      '<p><em>Placeholder page. Replace this with your own reference material.</em></p>\n' +
+      '<h3>Comms</h3>\n' +
+      '<ul>\n' +
+      '  <li>Communication plan: primary/backup channels, check-in schedule</li>\n' +
+      '  <li>Code words / call signs (if used)</li>\n' +
+      '</ul>',
+  },
+  {
     id: 'tactical',
     title: 'Tactical',
     content:
@@ -72,18 +84,6 @@ const DEFAULT_PAGES = [
       '  <li>Medical kit contents and locations</li>\n' +
       '  <li>Team member medical info / allergies (sensitive -- keep minimal)</li>\n' +
       '  <li>Evacuation criteria and contacts</li>\n' +
-      '</ul>',
-  },
-  {
-    id: 'technical',
-    title: 'Technical',
-    content:
-      '<h2>Technical</h2>\n' +
-      '<p><em>Placeholder page. Replace this with your own reference material.</em></p>\n' +
-      '<h3>Comms</h3>\n' +
-      '<ul>\n' +
-      '  <li>Communication plan: primary/backup channels, check-in schedule</li>\n' +
-      '  <li>Code words / call signs (if used)</li>\n' +
       '</ul>',
   },
 ];
