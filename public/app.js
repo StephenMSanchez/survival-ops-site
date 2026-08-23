@@ -179,6 +179,8 @@ function renderApp(state) {
   const appEl = document.getElementById('app');
   appEl.hidden = false;
 
+  const navEl = document.getElementById('nav');
+  const navToggle = document.getElementById('nav-toggle');
   const navList = document.getElementById('nav-list');
   const trainingNavList = document.getElementById('training-nav-list');
   const trainingNavTitle = document.getElementById('training-nav-title');
@@ -188,6 +190,16 @@ function renderApp(state) {
   const adminBtn = document.getElementById('admin-btn');
   navList.innerHTML = '';
   trainingNavList.innerHTML = '';
+
+  const isMobileViewport = () => window.matchMedia('(max-width: 767px)').matches;
+  function setNavCollapsed(collapsed) {
+    navEl.classList.toggle('collapsed', collapsed);
+  }
+  // Narrow screens start collapsed to save space; wider ones start expanded.
+  setNavCollapsed(isMobileViewport());
+  navToggle.addEventListener('click', () => {
+    setNavCollapsed(!navEl.classList.contains('collapsed'));
+  });
 
   if (allIds.length === 0) {
     content.innerHTML = '<p class="empty-state">No pages configured.</p>';
@@ -434,6 +446,10 @@ function renderApp(state) {
   function goToPage(id) {
     showPage(id);
     window.location.hash = id;
+    // Collapse back down after picking something on a phone-sized screen, so
+    // the content is immediately visible instead of staying hidden behind
+    // the expanded menu.
+    if (isMobileViewport()) setNavCollapsed(true);
   }
 
   function handleNavClick(e) {

@@ -343,6 +343,56 @@ button:hover {
   padding: 20px 14px;
   display: flex;
   flex-direction: column;
+  transition: width 0.2s ease, padding 0.2s ease;
+  overflow: hidden;
+}
+
+.nav-toggle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.nav-toggle span {
+  display: block;
+  width: 15px;
+  height: 2px;
+  background: var(--muted);
+  transition: background 0.15s ease;
+}
+
+.nav-toggle:hover {
+  border-color: var(--accent-dim);
+  background: transparent;
+  box-shadow: none;
+}
+
+.nav-toggle:hover span {
+  background: var(--accent);
+}
+
+/* Collapsed: shrink to a narrow rail showing just the toggle button. */
+.nav.collapsed {
+  width: 60px;
+  padding-left: 14px;
+  padding-right: 14px;
+}
+
+.nav.collapsed .nav-title,
+.nav.collapsed ul,
+.nav.collapsed .lock-btn {
+  display: none;
 }
 
 .nav-title {
