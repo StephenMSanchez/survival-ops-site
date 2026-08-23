@@ -426,17 +426,6 @@ const DEFAULT_PAGES = [
     group: 'training',
     subpages: [
       {
-        id: 'overview',
-        title: 'Overview',
-        content:
-          '<p><em>Placeholder page. Replace this with your own reference material.</em></p>\n' +
-          '<ul>\n' +
-          '  <li>Training schedule and milestones</li>\n' +
-          '  <li>Skill checkpoints</li>\n' +
-          '  <li>Required certifications</li>\n' +
-          '</ul>',
-      },
-      {
         id: 'desert-survival-camp',
         title: 'Desert Survival Camp (9/4–9/7)',
         content:
@@ -469,17 +458,6 @@ const DEFAULT_PAGES = [
     group: 'training',
     subpages: [
       {
-        id: 'overview',
-        title: 'Overview',
-        content:
-          '<p><em>Placeholder page. Replace this with your own reference material.</em></p>\n' +
-          '<ul>\n' +
-          '  <li>Training schedule and milestones</li>\n' +
-          '  <li>Skill checkpoints</li>\n' +
-          '  <li>Required certifications</li>\n' +
-          '</ul>',
-      },
-      {
         id: 'basic-comms',
         title: 'Basic Comms (9/19)',
         content:
@@ -499,17 +477,6 @@ const DEFAULT_PAGES = [
     group: 'training',
     subpages: [
       {
-        id: 'overview',
-        title: 'Overview',
-        content:
-          '<p><em>Placeholder page. Replace this with your own reference material.</em></p>\n' +
-          '<ul>\n' +
-          '  <li>Training schedule and milestones</li>\n' +
-          '  <li>Skill checkpoints</li>\n' +
-          '  <li>Required certifications</li>\n' +
-          '</ul>',
-      },
-      {
         id: 'concealed-carry-concepts',
         title: 'Concealed Carry Concepts (8/29–8/30)',
         content:
@@ -528,17 +495,6 @@ const DEFAULT_PAGES = [
     title: 'Rescue',
     group: 'training',
     subpages: [
-      {
-        id: 'overview',
-        title: 'Overview',
-        content:
-          '<p><em>Placeholder page. Replace this with your own reference material.</em></p>\n' +
-          '<ul>\n' +
-          '  <li>Training schedule and milestones</li>\n' +
-          '  <li>Skill checkpoints</li>\n' +
-          '  <li>Required certifications</li>\n' +
-          '</ul>',
-      },
       {
         id: 'high-angle-rescue',
         title: 'High Angle Rescue (9/12)',
