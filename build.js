@@ -35,25 +35,164 @@ const DEFAULT_PAGES = [
     title: 'Survival',
     subpages: [
       {
-        id: 'overview',
-        title: 'Overview',
+        id: 'emergency-packs',
+        title: 'Emergency Packs',
         content:
           '<p><em>Placeholder page. Replace this with your own reference material.</em></p>\n' +
           '<ul>\n' +
-          '  <li>Water: sourcing, purification methods, storage</li>\n' +
-          '  <li>Shelter: site selection, construction basics</li>\n' +
-          '  <li>Fire: methods, safety, materials</li>\n' +
-          '  <li>Food: foraging cautions, storage, rationing</li>\n' +
-          '  <li>Navigation: map/compass, landmarks, routes</li>\n' +
+          '  <li>Bug-out bag vs. get-home bag vs. everyday carry</li>\n' +
+          '  <li>Pack contents and weight budget</li>\n' +
+          '  <li>Rotation/expiration checks: food, water, batteries, meds</li>\n' +
           '</ul>',
       },
       {
-        id: 'medical',
-        title: 'Medical',
+        id: 'terrain-land-nav',
+        title: 'Terrain & Land Nav',
+        content:
+          '<ul>\n' +
+          '  <li>Map and compass basics, declination</li>\n' +
+          '  <li>Reading topographic features</li>\n' +
+          '  <li>Dead reckoning and triangulation</li>\n' +
+          '  <li>GPS backup and offline maps</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'urban-survival',
+        title: 'Urban Survival',
+        content:
+          '<ul>\n' +
+          '  <li>Sheltering in place vs. evacuation</li>\n' +
+          '  <li>Urban water and food sourcing</li>\n' +
+          '  <li>Situational awareness</li>\n' +
+          '  <li>Utility failures: power, water, gas</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'wilderness-survival',
+        title: 'Wilderness Survival',
+        content:
+          '<ul>\n' +
+          '  <li>Priorities of survival: shelter, fire, water, food</li>\n' +
+          '  <li>Signaling for rescue</li>\n' +
+          '  <li>Staying put vs. self-rescue decision points</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'water-procurement-treatment',
+        title: 'Water Procurement & Treatment',
+        content:
+          '<ul>\n' +
+          '  <li>Sourcing: streams, dew collection, transpiration bags</li>\n' +
+          '  <li>Filtration methods</li>\n' +
+          '  <li>Boiling and chemical treatment</li>\n' +
+          '  <li>Storage and rationing</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'firecraft',
+        title: 'Firecraft',
+        content:
+          '<ul>\n' +
+          '  <li>Fire-starting methods: friction, ferro rod, matches</li>\n' +
+          '  <li>Tinder, kindling, fuel wood selection</li>\n' +
+          '  <li>Fire lays for cooking, warmth, signaling</li>\n' +
+          '  <li>Fire safety and Leave No Trace</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'wilderness-first-aid',
+        title: 'Wilderness First-Aid',
         content:
           '<ul>\n' +
           '  <li>Trauma basics: bleeding control, splinting</li>\n' +
-          '  <li>Common environmental injuries: heat, cold, dehydration</li>\n' +
+          '  <li>Environmental injuries: heat, cold, dehydration</li>\n' +
+          '  <li>Improvised medical kit</li>\n' +
+          '  <li>Evacuation criteria</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'foraging-botany',
+        title: 'Foraging & Botany',
+        content:
+          '<ul>\n' +
+          '  <li>Universal edibility test</li>\n' +
+          '  <li>Common edible/poisonous look-alikes</li>\n' +
+          '  <li>Seasonal foraging calendar</li>\n' +
+          '  <li>Regional plant ID resources</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'knot-rope-work',
+        title: 'Knot & Rope Work',
+        content:
+          '<ul>\n' +
+          '  <li>Core knots: bowline, clove hitch, taut-line hitch</li>\n' +
+          '  <li>Lashings for shelter building</li>\n' +
+          '  <li>Rope care and selection</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'hunting-trapping-fishing',
+        title: 'Hunting, Trapping & Fishing',
+        content:
+          '<ul>\n' +
+          '  <li>Passive trap and snare basics</li>\n' +
+          '  <li>Improvised fishing rigs</li>\n' +
+          '  <li>Legal/regulatory considerations</li>\n' +
+          '  <li>Field dressing basics</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'shelter-site-selection',
+        title: 'Shelter & Site Selection',
+        content:
+          '<ul>\n' +
+          '  <li>Site selection criteria: drainage, wind, hazards</li>\n' +
+          '  <li>Debris hut, lean-to, tarp configurations</li>\n' +
+          '  <li>Insulation from the ground</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'bushcraft-bivouacking',
+        title: 'Bushcraft & Bivouacking',
+        content:
+          '<ul>\n' +
+          '  <li>Tool use and maintenance: knife, axe, saw</li>\n' +
+          '  <li>Bivy setup for short overnight stops</li>\n' +
+          '  <li>Camp craft essentials</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'mountaineering',
+        title: 'Mountaineering',
+        content:
+          '<ul>\n' +
+          '  <li>Route planning and weather windows</li>\n' +
+          '  <li>Basic rope systems and belaying</li>\n' +
+          '  <li>Altitude acclimatization</li>\n' +
+          '  <li>Rockfall and avalanche awareness</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'winter-alpine-survival',
+        title: 'Winter/Alpine Survival',
+        content:
+          '<ul>\n' +
+          '  <li>Cold injury prevention: frostbite, hypothermia</li>\n' +
+          '  <li>Snow shelter construction</li>\n' +
+          '  <li>Layering systems</li>\n' +
+          '  <li>Avalanche basics</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'arid-desert-survival',
+        title: 'Arid/Desert Survival',
+        content:
+          '<ul>\n' +
+          '  <li>Water rationing and heat management</li>\n' +
+          '  <li>Shade and shelter in open terrain</li>\n' +
+          '  <li>Travel timing: night movement</li>\n' +
+          '  <li>Signaling in open terrain</li>\n' +
           '</ul>',
       },
     ],
