@@ -241,9 +241,11 @@ function renderApp(state) {
       )
       .join('');
     const tabsHtml = meta.length > 1 ? '<div class="subtabs">' + tabs + '</div>\n' : '';
+    const activeMeta = meta.find((s) => s.id === activeId);
+    const subHeaderHtml = activeMeta ? '<h3 class="subpage-title">' + activeMeta.title + '</h3>\n' : '';
 
     if (!page) {
-      content.innerHTML = '<h2>' + titleById[pageId] + '</h2>\n' + tabsHtml;
+      content.innerHTML = '<h2>' + titleById[pageId] + '</h2>\n' + tabsHtml + subHeaderHtml;
       wireSubtabClicks(pageId);
       showAccessDenied(pageId);
       return;
@@ -251,7 +253,7 @@ function renderApp(state) {
 
     const active = page.subpages.find((s) => s.id === activeId) || page.subpages[0];
     content.innerHTML =
-      '<h2>' + page.title + '</h2>\n' + tabsHtml +
+      '<h2>' + page.title + '</h2>\n' + tabsHtml + subHeaderHtml +
       '<div class="subpage-body">' + active.content + '</div>';
     wireSubtabClicks(pageId);
     wirePackTiers();

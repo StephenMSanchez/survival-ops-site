@@ -439,6 +439,15 @@ button:hover {
   letter-spacing: 0.04em;
 }
 
+.subpage-title {
+  margin: 0 0 20px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: clamp(1.4rem, 3vw, 1.9rem);
+  font-weight: 700;
+}
+
 .empty-state {
   color: var(--muted);
 }

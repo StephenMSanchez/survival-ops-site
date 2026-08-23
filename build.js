@@ -395,16 +395,6 @@ const DEFAULT_PAGES = [
           '  <li>Physical and digital footprint reduction</li>\n' +
           '</ul>',
       },
-      {
-        id: 'sigint',
-        title: 'SIG.INT',
-        content:
-          '<ul>\n' +
-          '  <li>Monitored frequencies and channels</li>\n' +
-          '  <li>Intercept and logging procedures</li>\n' +
-          '  <li>Code words and authentication procedures</li>\n' +
-          '</ul>',
-      },
     ],
   },
 ];
