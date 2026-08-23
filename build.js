@@ -219,27 +219,91 @@ const DEFAULT_PAGES = [
           '<p><em>Placeholder page. Replace this with your own reference material.</em></p>\n' +
           '<ul>\n' +
           '  <li>Roster: names, roles, contact info</li>\n' +
+          '  <li>Chain of command</li>\n' +
           '  <li>Emergency contacts</li>\n' +
           '</ul>',
       },
       {
-        id: 'ops-plans',
-        title: 'Ops Plans',
+        id: 'squads',
+        title: 'Squads',
         content:
           '<ul>\n' +
-          '  <li>Standing operating procedures</li>\n' +
-          '  <li>Rally points and routes</li>\n' +
+          '  <li>Squad composition and organization</li>\n' +
+          '  <li>Squad assignments and rally roles</li>\n' +
+          '  <li>Cross-training and backup assignments</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'armory',
+        title: 'Armory',
+        content:
+          '<ul>\n' +
+          '  <li>Weapons inventory and assignment</li>\n' +
+          '  <li>Ammunition stock and rotation</li>\n' +
+          '  <li>Maintenance schedule and cleaning log</li>\n' +
+          '  <li>Storage and security</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'missions',
+        title: 'Missions',
+        content:
+          '<ul>\n' +
+          '  <li>Current mission briefs and objectives</li>\n' +
+          '  <li>Timelines and rally points</li>\n' +
           '  <li>After-action review notes</li>\n' +
           '</ul>',
       },
       {
-        id: 'medical',
-        title: 'Medical',
+        id: 'sit-reps',
+        title: 'SIT.REPS',
         content:
           '<ul>\n' +
-          '  <li>Medical kit contents and locations</li>\n' +
-          '  <li>Team member medical info / allergies (sensitive -- keep minimal)</li>\n' +
-          '  <li>Evacuation criteria and contacts</li>\n' +
+          '  <li>Situation report format</li>\n' +
+          '  <li>Reporting schedule and check-in windows</li>\n' +
+          '  <li>Escalation criteria</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'assets',
+        title: 'Assets',
+        content:
+          '<ul>\n' +
+          '  <li>Vehicles and fuel status</li>\n' +
+          '  <li>Equipment inventory</li>\n' +
+          '  <li>Property and resource tracking</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'pace',
+        title: 'P.A.C.E.',
+        content:
+          '<p><em>Primary, Alternate, Contingency, Emergency — layered fallback plans.</em></p>\n' +
+          '<ul>\n' +
+          '  <li>Primary: communication and movement plan</li>\n' +
+          '  <li>Alternate: backup channels and routes</li>\n' +
+          '  <li>Contingency: degraded/limited options</li>\n' +
+          '  <li>Emergency: last-resort plan</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'opsec',
+        title: 'Op.Sec',
+        content:
+          '<ul>\n' +
+          '  <li>Information compartmentalization</li>\n' +
+          '  <li>Comms discipline and code words</li>\n' +
+          '  <li>Physical and digital footprint reduction</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'sigint',
+        title: 'SIG.INT',
+        content:
+          '<ul>\n' +
+          '  <li>Monitored frequencies and channels</li>\n' +
+          '  <li>Intercept and logging procedures</li>\n' +
+          '  <li>Code words and authentication procedures</li>\n' +
           '</ul>',
       },
     ],
