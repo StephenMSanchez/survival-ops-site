@@ -252,7 +252,7 @@ function renderApp(state) {
       .join('');
     content.innerHTML =
       '<h2>STAC-OPS</h2>\n' +
-      '<p>Select a section to continue.</p>\n' +
+      '<p>// Team &amp; Tools Menu</p>\n' +
       '<ul class="home-links">' + links + '</ul>';
     document.querySelectorAll('#nav-list a').forEach((a) => a.classList.remove('active'));
     adminBtn.classList.remove('active');
