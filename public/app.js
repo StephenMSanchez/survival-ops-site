@@ -162,23 +162,32 @@ function renderApp(state) {
   const { unlocked, manifest, pageMeta } = state;
   const allIds = manifest.map((m) => m.id);
   // "admin" gets its own dedicated button (styled like Lock Site) instead of
-  // living in the regular page list/nav/home links.
+  // living in the regular page list/nav/home links. Everything else is
+  // grouped into sections (plain manifest entries default to "main"; the
+  // Training Schedule pages are tagged group: "training" at build time).
   const contentIds = allIds.filter((id) => id !== 'admin');
   const titleById = {};
+  const groupById = {};
   manifest.forEach((m) => {
     titleById[m.id] = m.title;
+    groupById[m.id] = m.group || 'main';
   });
+  const mainIds = contentIds.filter((id) => groupById[id] !== 'training');
+  const trainingIds = contentIds.filter((id) => groupById[id] === 'training');
 
   document.getElementById('gate').hidden = true;
   const appEl = document.getElementById('app');
   appEl.hidden = false;
 
   const navList = document.getElementById('nav-list');
+  const trainingNavList = document.getElementById('training-nav-list');
+  const trainingNavTitle = document.getElementById('training-nav-title');
   const content = document.getElementById('content');
   const modal = document.getElementById('access-modal');
   const modalMessage = document.getElementById('access-modal-message');
   const adminBtn = document.getElementById('admin-btn');
   navList.innerHTML = '';
+  trainingNavList.innerHTML = '';
 
   if (allIds.length === 0) {
     content.innerHTML = '<p class="empty-state">No pages configured.</p>';
@@ -195,17 +204,25 @@ function renderApp(state) {
     return page.subpages.length < total ? 'limited' : '';
   }
 
-  contentIds.forEach((id) => {
-    const li = document.createElement('li');
-    const a = document.createElement('a');
-    a.href = '#' + id;
-    a.textContent = titleById[id];
-    a.dataset.id = id;
-    const cls = accessClass(id);
-    if (cls) a.classList.add(cls);
-    li.appendChild(a);
-    navList.appendChild(li);
-  });
+  function renderNavItems(ids, listEl) {
+    ids.forEach((id) => {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = '#' + id;
+      a.textContent = titleById[id];
+      a.dataset.id = id;
+      const cls = accessClass(id);
+      if (cls) a.classList.add(cls);
+      li.appendChild(a);
+      listEl.appendChild(li);
+    });
+  }
+
+  renderNavItems(mainIds, navList);
+  if (trainingIds.length > 0) {
+    trainingNavTitle.hidden = false;
+    renderNavItems(trainingIds, trainingNavList);
+  }
 
   if (allIds.includes('admin')) {
     adminBtn.hidden = false;
@@ -239,9 +256,8 @@ function renderApp(state) {
     if (e.target === modal) hideAccessDenied();
   });
 
-  function renderHome() {
-    delete appEl.dataset.page;
-    const links = contentIds
+  function homeLinksHtml(ids) {
+    return ids
       .map((id) => {
         const cls = accessClass(id);
         return (
@@ -250,11 +266,19 @@ function renderApp(state) {
         );
       })
       .join('');
+  }
+
+  function renderHome() {
+    delete appEl.dataset.page;
+    const trainingSection = trainingIds.length > 0
+      ? '<p>// Training Schedule</p>\n<ul class="home-links">' + homeLinksHtml(trainingIds) + '</ul>'
+      : '';
     content.innerHTML =
       '<h2>STAC-OPS</h2>\n' +
       '<p>// Team &amp; Tools Menu</p>\n' +
-      '<ul class="home-links">' + links + '</ul>';
-    document.querySelectorAll('#nav-list a').forEach((a) => a.classList.remove('active'));
+      '<ul class="home-links">' + homeLinksHtml(mainIds) + '</ul>' +
+      trainingSection;
+    document.querySelectorAll('#nav-list a, #training-nav-list a').forEach((a) => a.classList.remove('active'));
     adminBtn.classList.remove('active');
   }
 
@@ -392,7 +416,7 @@ function renderApp(state) {
       return;
     }
     renderPage(pageId, subId);
-    document.querySelectorAll('#nav-list a').forEach((a) => {
+    document.querySelectorAll('#nav-list a, #training-nav-list a').forEach((a) => {
       a.classList.toggle('active', a.dataset.id === pageId);
     });
     adminBtn.classList.toggle('active', pageId === 'admin');
@@ -411,6 +435,7 @@ function renderApp(state) {
   }
 
   navList.addEventListener('click', handleNavClick);
+  trainingNavList.addEventListener('click', handleNavClick);
   // Delegated so it keeps working after renderHome() replaces #content's markup.
   content.addEventListener('click', (e) => {
     if (e.target.closest('.home-links')) handleNavClick(e);

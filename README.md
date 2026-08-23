@@ -79,6 +79,14 @@ each needs a unique `id`, `title`, and `content` (raw HTML). Since editing is
 just you, occasionally, there's no in-browser editor -- you (or you working
 with Claude) edit `secrets.json` and rebuild.
 
+A page can also set `"group": "training"` to put it in the sidebar's
+"Training Schedule" section instead of the default "Team & Tools Menu"
+section (any value other than `"main"`/unset creates a Training Schedule
+entry). Access is still controlled independently per page/sub-page via
+`users[].pages`, same as any other page -- a training page with the same
+display name as a main page (e.g. both titled "Survival") is still a
+completely separate `id` with its own content and its own grants.
+
 ## Managing logins and access
 
 Each entry in the `users` array in `secrets.json` is one login:

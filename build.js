@@ -420,6 +420,60 @@ const DEFAULT_PAGES = [
       },
     ],
   },
+  {
+    id: 'training-survival',
+    title: 'Survival',
+    group: 'training',
+    subpages: [
+      {
+        id: 'overview',
+        title: 'Overview',
+        content:
+          '<p><em>Placeholder page. Replace this with your own reference material.</em></p>\n' +
+          '<ul>\n' +
+          '  <li>Training schedule and milestones</li>\n' +
+          '  <li>Skill checkpoints</li>\n' +
+          '  <li>Required certifications</li>\n' +
+          '</ul>',
+      },
+    ],
+  },
+  {
+    id: 'training-technical',
+    title: 'Technical',
+    group: 'training',
+    subpages: [
+      {
+        id: 'overview',
+        title: 'Overview',
+        content:
+          '<p><em>Placeholder page. Replace this with your own reference material.</em></p>\n' +
+          '<ul>\n' +
+          '  <li>Training schedule and milestones</li>\n' +
+          '  <li>Skill checkpoints</li>\n' +
+          '  <li>Required certifications</li>\n' +
+          '</ul>',
+      },
+    ],
+  },
+  {
+    id: 'training-tactical',
+    title: 'Tactical',
+    group: 'training',
+    subpages: [
+      {
+        id: 'overview',
+        title: 'Overview',
+        content:
+          '<p><em>Placeholder page. Replace this with your own reference material.</em></p>\n' +
+          '<ul>\n' +
+          '  <li>Training schedule and milestones</li>\n' +
+          '  <li>Skill checkpoints</li>\n' +
+          '  <li>Required certifications</li>\n' +
+          '</ul>',
+      },
+    ],
+  },
 ];
 
 function log(...args) {
@@ -655,7 +709,7 @@ function main() {
       JSON.stringify({ id: page.id, title: page.title, subpages: subpagesOut })
     );
 
-    manifest.push({ id: page.id, title: page.title });
+    manifest.push({ id: page.id, title: page.title, group: page.group || 'main' });
   }
 
   fs.writeFileSync(path.join(DIST_DIR, 'pages', 'manifest.json'), JSON.stringify(manifest));

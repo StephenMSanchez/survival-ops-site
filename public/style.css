@@ -121,6 +121,16 @@ body {
   --accent-dim: #256e79;
 }
 
+#app[data-page="training-survival"] {
+  --accent: #d98a3f;
+  --accent-dim: #a05f26;
+}
+
+#app[data-page="training-technical"] {
+  --accent: #3fb6c4;
+  --accent-dim: #256e79;
+}
+
 .nav li a.locked {
   color: var(--muted);
   opacity: 0.7;
@@ -346,7 +356,14 @@ button:hover {
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+.nav ul:last-of-type {
   flex: 1;
+}
+
+#training-nav-title {
+  margin-top: 20px;
 }
 
 .nav li a {
@@ -531,31 +548,38 @@ button:hover {
    lock status -- the LOCKED/LIMITED badge (added elsewhere) is what conveys
    access, not muted color, so these come after .home-links a.locked in the
    cascade to win the tie. */
-.home-links a[data-id="survival"] {
+.home-links a[data-id="survival"],
+.home-links a[data-id="training-survival"] {
   color: #d98a3f;
   border-left-color: #a05f26;
 }
 
 .home-links a[data-id="survival"]:hover,
-.home-links a[data-id="survival"]:focus-visible {
+.home-links a[data-id="survival"]:focus-visible,
+.home-links a[data-id="training-survival"]:hover,
+.home-links a[data-id="training-survival"]:focus-visible {
   color: #d98a3f;
   border-left-color: #d98a3f;
   box-shadow: 0 0 12px rgba(217, 138, 63, 0.25);
 }
 
-.home-links a[data-id="technical"] {
+.home-links a[data-id="technical"],
+.home-links a[data-id="training-technical"] {
   color: #3fb6c4;
   border-left-color: #256e79;
 }
 
 .home-links a[data-id="technical"]:hover,
-.home-links a[data-id="technical"]:focus-visible {
+.home-links a[data-id="technical"]:focus-visible,
+.home-links a[data-id="training-technical"]:hover,
+.home-links a[data-id="training-technical"]:focus-visible {
   color: #3fb6c4;
   border-left-color: #3fb6c4;
   box-shadow: 0 0 12px rgba(63, 182, 196, 0.25);
 }
 
-.home-links a[data-id="tactical"] {
+.home-links a[data-id="tactical"],
+.home-links a[data-id="training-tactical"] {
   color: var(--accent);
 }
 
