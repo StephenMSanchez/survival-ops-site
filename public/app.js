@@ -320,8 +320,14 @@ function renderApp(state) {
     // scheduled event's date should appear as a tab, not just the header --
     // while other pages still hide a lone tab as redundant with the heading.
     const showTabs = groupById[pageId] === 'training' ? meta.length >= 1 : meta.length > 1;
-    const tabsHtml = showTabs ? '<div class="subtabs">' + tabs + '</div>\n' : '';
     const activeMeta = meta.find((s) => s.id === activeId);
+    // On mobile the tab list starts collapsed behind this toggle so picking a
+    // tab doesn't require scrolling past every other one first; desktop hides
+    // the toggle via CSS and always shows the full row.
+    const toggleHtml = showTabs
+      ? '<button class="subtabs-toggle" type="button">' + (activeMeta ? activeMeta.title : '') + '</button>\n'
+      : '';
+    const tabsHtml = showTabs ? toggleHtml + '<div class="subtabs">' + tabs + '</div>\n' : '';
     const subHeaderHtml = activeMeta ? '<h3 class="subpage-title">' + activeMeta.title + '</h3>\n' : '';
 
     // "page" exists whenever the login unlocks at least one sub-tab here, but
@@ -344,6 +350,14 @@ function renderApp(state) {
   }
 
   function wireSubtabClicks(pageId) {
+    const toggleBtn = content.querySelector('.subtabs-toggle');
+    const tabsEl = content.querySelector('.subtabs');
+    if (toggleBtn && tabsEl) {
+      toggleBtn.addEventListener('click', () => {
+        tabsEl.classList.toggle('expanded');
+        toggleBtn.classList.toggle('expanded');
+      });
+    }
     content.querySelectorAll('.subtab').forEach((btn) => {
       btn.addEventListener('click', () => {
         window.location.hash = pageId + '/' + btn.dataset.sub;

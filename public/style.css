@@ -536,6 +536,49 @@ button:hover {
   opacity: 0.9;
 }
 
+.subtabs-toggle {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .subtabs-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: "Share Tech Mono", monospace;
+    font-size: 0.8rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 10px 14px;
+    border-radius: 3px;
+    margin-bottom: 10px;
+  }
+
+  .subtabs-toggle::after {
+    content: "\25BC";
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-left: 10px;
+  }
+
+  .subtabs-toggle.expanded::after {
+    content: "\25B2";
+  }
+
+  .subtabs {
+    display: none;
+  }
+
+  .subtabs.expanded {
+    display: flex;
+  }
+}
+
 .content h2 {
   margin-top: 0;
   color: var(--accent);
