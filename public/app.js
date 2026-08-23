@@ -271,11 +271,11 @@ function renderApp(state) {
   function renderHome() {
     delete appEl.dataset.page;
     const trainingSection = trainingIds.length > 0
-      ? '<p>// Training Schedule</p>\n<ul class="home-links">' + homeLinksHtml(trainingIds) + '</ul>'
+      ? '<p class="home-section-title">// Training Schedule</p>\n<ul class="home-links">' + homeLinksHtml(trainingIds) + '</ul>'
       : '';
     content.innerHTML =
       '<h2>STAC-OPS</h2>\n' +
-      '<p>// Team &amp; Tools Menu</p>\n' +
+      '<p class="home-section-title">// Team &amp; Tools Menu</p>\n' +
       '<ul class="home-links">' + homeLinksHtml(mainIds) + '</ul>' +
       trainingSection;
     document.querySelectorAll('#nav-list a, #training-nav-list a').forEach((a) => a.classList.remove('active'));

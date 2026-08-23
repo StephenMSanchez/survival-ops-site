@@ -131,6 +131,11 @@ body {
   --accent-dim: #256e79;
 }
 
+#app[data-page="training-rescue"] {
+  --accent: #e0453f;
+  --accent-dim: #a52d28;
+}
+
 .nav li a.locked {
   color: var(--muted);
   opacity: 0.7;
@@ -363,7 +368,7 @@ button:hover {
 }
 
 #training-nav-title {
-  margin-top: 20px;
+  margin-top: 44px;
 }
 
 .nav li a {
@@ -508,6 +513,17 @@ button:hover {
   color: var(--muted);
 }
 
+.home-section-title {
+  margin: 0;
+}
+
+/* Extra breathing room between the Team & Tools section and the next one
+   (Training Schedule) -- only applies when a section title follows a list,
+   not the first title right under the STAC-OPS heading. */
+.home-links + .home-section-title {
+  margin-top: 48px;
+}
+
 .home-links {
   list-style: none;
   margin: 24px 0 0;
@@ -581,6 +597,18 @@ button:hover {
 .home-links a[data-id="tactical"],
 .home-links a[data-id="training-tactical"] {
   color: var(--accent);
+}
+
+.home-links a[data-id="training-rescue"] {
+  color: #e0453f;
+  border-left-color: #a52d28;
+}
+
+.home-links a[data-id="training-rescue"]:hover,
+.home-links a[data-id="training-rescue"]:focus-visible {
+  color: #e0453f;
+  border-left-color: #e0453f;
+  box-shadow: 0 0 12px rgba(224, 69, 63, 0.25);
 }
 
 /* -- Pack tiers (Emergency Packs) -- */

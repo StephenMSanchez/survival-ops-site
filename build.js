@@ -474,6 +474,24 @@ const DEFAULT_PAGES = [
       },
     ],
   },
+  {
+    id: 'training-rescue',
+    title: 'Rescue',
+    group: 'training',
+    subpages: [
+      {
+        id: 'overview',
+        title: 'Overview',
+        content:
+          '<p><em>Placeholder page. Replace this with your own reference material.</em></p>\n' +
+          '<ul>\n' +
+          '  <li>Training schedule and milestones</li>\n' +
+          '  <li>Skill checkpoints</li>\n' +
+          '  <li>Required certifications</li>\n' +
+          '</ul>',
+      },
+    ],
+  },
 ];
 
 function log(...args) {
