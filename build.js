@@ -436,6 +436,31 @@ const DEFAULT_PAGES = [
           '  <li>Required certifications</li>\n' +
           '</ul>',
       },
+      {
+        id: 'desert-survival-camp',
+        title: 'Desert Survival Camp (9/4–9/7)',
+        content:
+          '<p><em>Placeholder page. Replace this with your own reference material.</em></p>\n' +
+          '<ul>\n' +
+          '  <li>Dates: 9/4 – 9/7</li>\n' +
+          '  <li>Objectives</li>\n' +
+          '  <li>Prerequisites</li>\n' +
+          '  <li>Required gear</li>\n' +
+          '  <li>Location / RV point</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'big-game-tracking-hunting',
+        title: 'Big Game Tracking & Hunting (10/24)',
+        content:
+          '<ul>\n' +
+          '  <li>Date: 10/24</li>\n' +
+          '  <li>Objectives</li>\n' +
+          '  <li>Prerequisites</li>\n' +
+          '  <li>Required gear</li>\n' +
+          '  <li>Location / RV point</li>\n' +
+          '</ul>',
+      },
     ],
   },
   {
@@ -452,6 +477,18 @@ const DEFAULT_PAGES = [
           '  <li>Training schedule and milestones</li>\n' +
           '  <li>Skill checkpoints</li>\n' +
           '  <li>Required certifications</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'basic-comms',
+        title: 'Basic Comms (9/19)',
+        content:
+          '<ul>\n' +
+          '  <li>Date: 9/19</li>\n' +
+          '  <li>Objectives</li>\n' +
+          '  <li>Prerequisites</li>\n' +
+          '  <li>Required gear</li>\n' +
+          '  <li>Location / RV point</li>\n' +
           '</ul>',
       },
     ],
@@ -472,6 +509,18 @@ const DEFAULT_PAGES = [
           '  <li>Required certifications</li>\n' +
           '</ul>',
       },
+      {
+        id: 'concealed-carry-concepts',
+        title: 'Concealed Carry Concepts (8/29–8/30)',
+        content:
+          '<ul>\n' +
+          '  <li>Dates: 8/29 – 8/30</li>\n' +
+          '  <li>Objectives</li>\n' +
+          '  <li>Prerequisites</li>\n' +
+          '  <li>Required gear</li>\n' +
+          '  <li>Location / RV point</li>\n' +
+          '</ul>',
+      },
     ],
   },
   {
@@ -488,6 +537,30 @@ const DEFAULT_PAGES = [
           '  <li>Training schedule and milestones</li>\n' +
           '  <li>Skill checkpoints</li>\n' +
           '  <li>Required certifications</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'high-angle-rescue',
+        title: 'High Angle Rescue (9/12)',
+        content:
+          '<ul>\n' +
+          '  <li>Date: 9/12</li>\n' +
+          '  <li>Objectives</li>\n' +
+          '  <li>Prerequisites</li>\n' +
+          '  <li>Required gear</li>\n' +
+          '  <li>Location / RV point</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'aerial-hoist',
+        title: 'Aerial Hoist (10/18)',
+        content:
+          '<ul>\n' +
+          '  <li>Date: 10/18</li>\n' +
+          '  <li>Objectives</li>\n' +
+          '  <li>Prerequisites</li>\n' +
+          '  <li>Required gear</li>\n' +
+          '  <li>Location / RV point</li>\n' +
           '</ul>',
       },
     ],
