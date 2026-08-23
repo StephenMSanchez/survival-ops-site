@@ -254,6 +254,7 @@ function renderApp(state) {
       '<h2>' + page.title + '</h2>\n' + tabsHtml +
       '<div class="subpage-body">' + active.content + '</div>';
     wireSubtabClicks(pageId);
+    wirePackTiers();
   }
 
   function wireSubtabClicks(pageId) {
@@ -261,6 +262,85 @@ function renderApp(state) {
       btn.addEventListener('click', () => {
         window.location.hash = pageId + '/' + btn.dataset.sub;
       });
+    });
+  }
+
+  // Content set via innerHTML never runs its own <script> tags, so the
+  // pack-tiers markup (Emergency Packs: GHB/BOB/SRS checklists) needs its
+  // tier-switching, checkbox persistence, and progress bar reimplemented
+  // here rather than relying on script tags baked into the content HTML.
+  function wirePackTiers() {
+    const tiersEl = content.querySelector('.pack-tiers');
+    if (!tiersEl) return;
+    const STORAGE_PREFIX = 'sos_pack_';
+
+    content.querySelectorAll('.pack-tier-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const tier = btn.dataset.tier;
+        content.querySelectorAll('.pack-tier-btn').forEach((b) => b.classList.toggle('active', b.dataset.tier === tier));
+        content.querySelectorAll('.pack-tier-panel').forEach((p) => p.classList.toggle('active', p.dataset.tier === tier));
+      });
+    });
+
+    content.querySelectorAll('.pack-tier-panel').forEach((panel) => {
+      const tier = panel.dataset.tier;
+      const storageKey = STORAGE_PREFIX + tier;
+      const checkboxes = Array.from(panel.querySelectorAll('.pack-item input[type="checkbox"]'));
+      const countEl = panel.querySelector('.pack-checked-count');
+      const totalEl = panel.querySelector('.pack-total-count');
+      const fillEl = panel.querySelector('.pack-progress-fill');
+      const resetBtn = panel.querySelector('.pack-reset');
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(storageKey);
+          return raw ? JSON.parse(raw) : {};
+        } catch (e) {
+          return {};
+        }
+      }
+
+      function saveState(state) {
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(state));
+        } catch (e) {
+          // storage unavailable -- checks still work for this page load
+        }
+      }
+
+      function updateProgress() {
+        const checked = checkboxes.filter((cb) => cb.checked).length;
+        countEl.textContent = String(checked);
+        totalEl.textContent = String(checkboxes.length);
+        fillEl.style.width = (checkboxes.length ? (checked / checkboxes.length) * 100 : 0) + '%';
+      }
+
+      const state = loadState();
+      checkboxes.forEach((cb) => {
+        if (state[cb.id]) {
+          cb.checked = true;
+          cb.closest('.pack-item').classList.add('checked');
+        }
+        cb.addEventListener('change', () => {
+          cb.closest('.pack-item').classList.toggle('checked', cb.checked);
+          state[cb.id] = cb.checked;
+          saveState(state);
+          updateProgress();
+        });
+      });
+
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          checkboxes.forEach((cb) => {
+            cb.checked = false;
+            cb.closest('.pack-item').classList.remove('checked');
+          });
+          saveState({});
+          updateProgress();
+        });
+      }
+
+      updateProgress();
     });
   }
 

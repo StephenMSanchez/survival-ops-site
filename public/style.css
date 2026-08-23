@@ -474,3 +474,358 @@ button:hover {
   color: var(--accent);
   box-shadow: 0 0 12px rgba(70, 224, 122, 0.2);
 }
+
+/* -- Pack tiers (Emergency Packs) -- */
+.pack-tier-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 20px 0 24px;
+}
+
+.pack-tier-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: "Share Tech Mono", monospace;
+  font-size: 0.78rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  padding: 8px 14px;
+  border-radius: 3px;
+}
+
+.pack-tier-btn:hover {
+  border-color: var(--accent-dim);
+  color: var(--text);
+  background: transparent;
+  box-shadow: none;
+}
+
+.pack-tier-btn.active {
+  background: var(--accent-dim);
+  border-color: var(--accent-dim);
+  color: #04140a;
+  font-weight: 700;
+}
+
+.pack-tier-panel {
+  display: none;
+}
+
+.pack-tier-panel.active {
+  display: block;
+}
+
+.pack-title {
+  margin: 0 0 6px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 1.3rem;
+}
+
+.pack-subhead {
+  color: var(--muted);
+  max-width: 62ch;
+  margin: 0 0 14px;
+  font-size: 0.92rem;
+}
+
+.pack-specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  font-family: "Share Tech Mono", monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+.pack-specs strong {
+  color: var(--text);
+  font-weight: 400;
+}
+
+.pack-progress {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: "Share Tech Mono", monospace;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.pack-progress-count b {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.pack-progress-track {
+  flex: 1;
+  min-width: 120px;
+  height: 6px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.pack-progress-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0%;
+  background: var(--accent);
+  transition: width 0.2s ease;
+}
+
+.pack-reset {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: "Share Tech Mono", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 6px 10px;
+}
+
+.pack-reset:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+  background: transparent;
+  box-shadow: none;
+}
+
+.pack-notes {
+  margin: 0 0 18px;
+  padding: 14px 18px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  display: grid;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.pack-notes p {
+  margin: 0;
+}
+
+.pack-notes b {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.pack-legend {
+  font-family: "Share Tech Mono", monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin: 0 0 16px;
+}
+
+.pack-categories {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+@media (min-width: 720px) {
+  .pack-categories {
+    grid-template-columns: 1fr 1fr;
+    gap: 0 24px;
+  }
+}
+
+.pack-category {
+  padding: 18px 0 10px;
+  border-top: 1px solid var(--border);
+  break-inside: avoid;
+}
+
+.pack-category h4 {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 0 2px;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 1rem;
+}
+
+.pack-cat-num {
+  font-family: "Share Tech Mono", monospace;
+  font-size: 0.7rem;
+  color: var(--accent);
+}
+
+.pack-cat-desc {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin: 0 0 10px;
+}
+
+.pack-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+
+.pack-item {
+  background: var(--bg);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px;
+}
+
+.pack-item input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 15px;
+  height: 15px;
+  flex: none;
+  margin: 2px 0 0;
+  border: 1.5px solid var(--border-bright);
+  background: var(--panel);
+  cursor: pointer;
+  position: relative;
+  border-radius: 2px;
+}
+
+.pack-item input[type="checkbox"]:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.pack-item input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  border: solid #04140a;
+  border-width: 0 2px 2px 0;
+  transform: rotate(40deg);
+}
+
+.pack-item label {
+  flex: 1;
+  cursor: pointer;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 3px 8px;
+  font-size: 0.85rem;
+}
+
+.pack-item-name {
+  color: var(--text);
+}
+
+.pack-item.checked .pack-item-name {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--border-bright);
+}
+
+.pack-item-spec {
+  font-family: "Share Tech Mono", monospace;
+  font-size: 0.68rem;
+  color: var(--muted);
+}
+
+.pack-tag {
+  font-family: "Share Tech Mono", monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 2px;
+  flex: none;
+  line-height: 1.5;
+}
+
+.pack-tag.core {
+  background: var(--accent-dim);
+  color: #04140a;
+}
+
+.pack-tag.rec {
+  background: var(--border-bright);
+  color: var(--text);
+}
+
+.pack-tag.opt {
+  background: transparent;
+  color: var(--muted);
+  border: 1px dashed var(--border-bright);
+}
+
+.pack-climate {
+  margin-top: 30px;
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.pack-climate h4 {
+  margin: 0 0 10px;
+  color: var(--accent);
+  text-transform: uppercase;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+}
+
+.pack-climate-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .pack-climate-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.pack-climate h5 {
+  font-family: "Share Tech Mono", monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  margin: 0 0 6px;
+}
+
+.pack-climate p,
+.pack-climate ul {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.pack-climate ul {
+  padding-left: 16px;
+}
+
+.pack-climate li {
+  margin-bottom: 3px;
+}
+
+.pack-footnote {
+  margin-top: 24px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  font-family: "Share Tech Mono", monospace;
+  font-size: 0.7rem;
+  color: var(--muted);
+}
