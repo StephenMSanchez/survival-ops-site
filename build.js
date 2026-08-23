@@ -190,6 +190,18 @@ const DEFAULT_PAGES = [
           '  <li>Signaling in open terrain</li>\n' +
           '</ul>',
       },
+      {
+        id: 'marine-survival',
+        title: 'Marine Survival',
+        content:
+          '<ul>\n' +
+          '  <li>Flotation and improvised rafts</li>\n' +
+          '  <li>Signaling at sea</li>\n' +
+          '  <li>Fishing and marine foraging</li>\n' +
+          '  <li>Hypothermia and saltwater exposure risks</li>\n' +
+          '  <li>Navigation without instruments: stars, currents</li>\n' +
+          '</ul>',
+      },
     ],
   },
   {
@@ -341,6 +353,17 @@ const DEFAULT_PAGES = [
           '  <li>Ammunition stock and rotation</li>\n' +
           '  <li>Maintenance schedule and cleaning log</li>\n' +
           '  <li>Storage and security</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'ballistics',
+        title: 'Ballistics',
+        content:
+          '<ul>\n' +
+          '  <li>Ballistic tables and zeroing data</li>\n' +
+          '  <li>Ammunition types and terminal performance</li>\n' +
+          '  <li>Wind and elevation compensation</li>\n' +
+          '  <li>Caliber conversion and compatibility notes</li>\n' +
           '</ul>',
       },
       {
