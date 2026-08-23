@@ -9,6 +9,7 @@
   --accent: #46e07a;
   --accent-dim: #2c8a4f;
   --danger: #ff5f5f;
+  --warning: #e0c040;
 }
 
 * { box-sizing: border-box; }
@@ -135,6 +136,16 @@ body {
   opacity: 0.8;
 }
 
+.nav li a.limited::after {
+  content: "LIMITED";
+  display: block;
+  margin-top: 2px;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--warning);
+  opacity: 0.85;
+}
+
 .home-links a.locked {
   color: var(--muted);
   border-left-color: var(--border);
@@ -146,6 +157,18 @@ body {
   font-size: 0.7rem;
   color: var(--danger);
   opacity: 0.8;
+}
+
+.home-links a.limited {
+  border-left-color: var(--warning);
+}
+
+.home-links a.limited::after {
+  content: "LIMITED";
+  float: right;
+  font-size: 0.7rem;
+  color: var(--warning);
+  opacity: 0.85;
 }
 
 .modal-overlay {
@@ -425,6 +448,20 @@ button:hover {
 .subtab.active:hover {
   background: var(--accent);
   border-color: var(--accent);
+}
+
+.subtab.locked {
+  opacity: 0.65;
+}
+
+.subtab.locked::after {
+  content: "LOCKED";
+  display: block;
+  margin-top: 3px;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--danger);
+  opacity: 0.9;
 }
 
 .content h2 {

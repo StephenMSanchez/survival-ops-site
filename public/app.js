@@ -185,13 +185,24 @@ function renderApp(state) {
     return;
   }
 
+  // A page is "locked" with zero granted tabs, "limited" with some but not
+  // all, or neither (full access) -- distinct from a single sub-tab's own
+  // locked state, shown separately on its subtab button.
+  function accessClass(id) {
+    const page = unlocked[id];
+    if (!page) return 'locked';
+    const total = (pageMeta[id] || []).length;
+    return page.subpages.length < total ? 'limited' : '';
+  }
+
   contentIds.forEach((id) => {
     const li = document.createElement('li');
     const a = document.createElement('a');
     a.href = '#' + id;
     a.textContent = titleById[id];
     a.dataset.id = id;
-    if (!unlocked[id]) a.classList.add('locked');
+    const cls = accessClass(id);
+    if (cls) a.classList.add(cls);
     li.appendChild(a);
     navList.appendChild(li);
   });
@@ -232,9 +243,9 @@ function renderApp(state) {
     delete appEl.dataset.page;
     const links = contentIds
       .map((id) => {
-        const locked = !unlocked[id];
+        const cls = accessClass(id);
         return (
-          '<li><a href="#' + id + '" data-id="' + id + '"' + (locked ? ' class="locked"' : '') + '>' +
+          '<li><a href="#' + id + '" data-id="' + id + '"' + (cls ? ' class="' + cls + '"' : '') + '>' +
           titleById[id] + '</a></li>'
         );
       })
@@ -256,11 +267,13 @@ function renderApp(state) {
     const activeId = meta.some((s) => s.id === subId) ? subId : meta[0] && meta[0].id;
 
     const tabs = meta
-      .map(
-        (s) =>
-          '<button class="subtab' + (s.id === activeId ? ' active' : '') + '" data-sub="' +
-          s.id + '">' + s.title + '</button>'
-      )
+      .map((s) => {
+        const isLocked = !(page && page.subpages.some((p) => p.id === s.id));
+        return (
+          '<button class="subtab' + (s.id === activeId ? ' active' : '') + (isLocked ? ' locked' : '') +
+          '" data-sub="' + s.id + '">' + s.title + '</button>'
+        );
+      })
       .join('');
     const tabsHtml = meta.length > 1 ? '<div class="subtabs">' + tabs + '</div>\n' : '';
     const activeMeta = meta.find((s) => s.id === activeId);
