@@ -104,15 +104,17 @@ async function attemptUnlock(username, passcode) {
       const result = useUsername
         ? await tryUnlockPageAsUser(username.trim(), passcode, pageData)
         : await tryUnlockPageAsTotp(passcode, pageData);
-      return { id: entry.id, result };
+      return { id: entry.id, result, subpageMeta: pageData.subpageMeta || [] };
     })
   );
 
   const unlocked = {};
-  for (const { id, result } of results) {
+  const pageMeta = {};
+  for (const { id, result, subpageMeta } of results) {
     if (result) unlocked[id] = result;
+    pageMeta[id] = subpageMeta;
   }
-  return { unlocked, manifest };
+  return { unlocked, manifest, pageMeta };
 }
 
 function saveSession(state) {
@@ -141,7 +143,7 @@ function clearSession() {
 }
 
 function renderApp(state) {
-  const { unlocked, manifest } = state;
+  const { unlocked, manifest, pageMeta } = state;
   const allIds = manifest.map((m) => m.id);
   // "admin" gets its own dedicated button (styled like Lock Site) instead of
   // living in the regular page list/nav/home links.
@@ -226,33 +228,35 @@ function renderApp(state) {
   function renderPage(pageId, subId) {
     appEl.dataset.page = pageId;
     const page = unlocked[pageId];
+    // Sub-page id/title metadata is public (unlike its content), so a locked
+    // page can still show its title and tab labels -- just no body content.
+    const meta = pageMeta[pageId] || [];
+    const activeId = meta.some((s) => s.id === subId) ? subId : meta[0] && meta[0].id;
 
-    if (!page) {
-      content.innerHTML =
-        '<h2>' + titleById[pageId] + '</h2>\n' +
-        '<div class="access-denied-inline">\n' +
-        '  <p class="access-denied-title">Access Denied</p>\n' +
-        '  <p>' + clearanceMessage(pageId) + '</p>\n' +
-        '</div>';
-      return;
-    }
-
-    const subpages = page.subpages;
-    const active = subpages.find((s) => s.id === subId) || subpages[0];
-
-    const tabs = subpages
+    const tabs = meta
       .map(
         (s) =>
-          '<button class="subtab' + (s.id === active.id ? ' active' : '') + '" data-sub="' +
+          '<button class="subtab' + (s.id === activeId ? ' active' : '') + '" data-sub="' +
           s.id + '">' + s.title + '</button>'
       )
       .join('');
+    const tabsHtml = meta.length > 1 ? '<div class="subtabs">' + tabs + '</div>\n' : '';
 
+    if (!page) {
+      content.innerHTML = '<h2>' + titleById[pageId] + '</h2>\n' + tabsHtml;
+      wireSubtabClicks(pageId);
+      showAccessDenied(pageId);
+      return;
+    }
+
+    const active = page.subpages.find((s) => s.id === activeId) || page.subpages[0];
     content.innerHTML =
-      '<h2>' + page.title + '</h2>\n' +
-      (subpages.length > 1 ? '<div class="subtabs">' + tabs + '</div>\n' : '') +
+      '<h2>' + page.title + '</h2>\n' + tabsHtml +
       '<div class="subpage-body">' + active.content + '</div>';
+    wireSubtabClicks(pageId);
+  }
 
+  function wireSubtabClicks(pageId) {
     content.querySelectorAll('.subtab').forEach((btn) => {
       btn.addEventListener('click', () => {
         window.location.hash = pageId + '/' + btn.dataset.sub;
@@ -273,11 +277,7 @@ function renderApp(state) {
     adminBtn.classList.toggle('active', pageId === 'admin');
   }
 
-  function goToPageOrDeny(id) {
-    if (!unlocked[id]) {
-      showAccessDenied(id);
-      return;
-    }
+  function goToPage(id) {
     showPage(id);
     window.location.hash = id;
   }
@@ -286,7 +286,7 @@ function renderApp(state) {
     const a = e.target.closest('a[data-id]');
     if (!a) return;
     e.preventDefault();
-    goToPageOrDeny(a.dataset.id);
+    goToPage(a.dataset.id);
   }
 
   navList.addEventListener('click', handleNavClick);
@@ -296,7 +296,7 @@ function renderApp(state) {
   });
   const brandSubtitle = document.querySelector('.brand-subtitle');
   if (brandSubtitle) brandSubtitle.addEventListener('click', handleNavClick);
-  adminBtn.addEventListener('click', () => goToPageOrDeny('admin'));
+  adminBtn.addEventListener('click', () => goToPage('admin'));
 
   const initial = window.location.hash ? window.location.hash.slice(1) : 'home';
   showPage(initial);
@@ -339,14 +339,14 @@ async function init() {
     document.getElementById('gate-error').hidden = true;
 
     try {
-      const { unlocked, manifest } = await attemptUnlock(username, passcode);
+      const { unlocked, manifest, pageMeta } = await attemptUnlock(username, passcode);
       if (Object.keys(unlocked).length === 0) {
         showGateError(username.trim() ? 'Invalid username or passcode.' : 'Invalid rotating code.');
         passcodeInput.value = '';
         passcodeInput.focus();
         return;
       }
-      const state = { unlocked, manifest };
+      const state = { unlocked, manifest, pageMeta };
       saveSession(state);
       renderApp(state);
     } catch (err) {

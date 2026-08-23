@@ -148,31 +148,6 @@ body {
   opacity: 0.8;
 }
 
-.access-denied-inline {
-  margin-top: 24px;
-  padding: 20px 24px;
-  border: 1px solid var(--danger);
-  border-radius: 3px;
-  background: rgba(255, 95, 95, 0.06);
-  max-width: 420px;
-}
-
-.access-denied-title {
-  margin: 0 0 8px;
-  color: var(--danger);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-weight: 700;
-}
-
-.access-denied-title::before {
-  content: "! ";
-}
-
-.access-denied-inline p:last-child {
-  margin: 0;
-}
-
 .modal-overlay {
   position: fixed;
   inset: 0;

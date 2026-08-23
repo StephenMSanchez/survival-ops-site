@@ -327,6 +327,10 @@ function main() {
       salt: baseSalt.toString('base64'),
       content,
       wrapped,
+      // Sub-page id/title only (no content) is public, same as the page's own
+      // id/title in manifest.json -- lets a locked-out viewer see a page's
+      // tab labels without being able to decrypt what's under them.
+      subpageMeta: (page.subpages || []).map((s) => ({ id: s.id, title: s.title })),
     };
 
     fs.writeFileSync(
