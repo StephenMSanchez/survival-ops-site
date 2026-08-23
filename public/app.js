@@ -304,7 +304,11 @@ function renderApp(state) {
         );
       })
       .join('');
-    const tabsHtml = meta.length > 1 ? '<div class="subtabs">' + tabs + '</div>\n' : '';
+    // Training Schedule pages always show their tab(s) -- even a single
+    // scheduled event's date should appear as a tab, not just the header --
+    // while other pages still hide a lone tab as redundant with the heading.
+    const showTabs = groupById[pageId] === 'training' ? meta.length >= 1 : meta.length > 1;
+    const tabsHtml = showTabs ? '<div class="subtabs">' + tabs + '</div>\n' : '';
     const activeMeta = meta.find((s) => s.id === activeId);
     const subHeaderHtml = activeMeta ? '<h3 class="subpage-title">' + activeMeta.title + '</h3>\n' : '';
 
