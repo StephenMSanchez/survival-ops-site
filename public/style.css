@@ -523,6 +523,40 @@ button:hover {
   box-shadow: 0 0 12px rgba(70, 224, 122, 0.2);
 }
 
+/* Each section's home-page link uses that page's own accent color (matching
+   its heading/active-tab color once you're inside it), not the home view's
+   default green -- since #app has no [data-page] while home is showing, the
+   colorway CSS vars aren't in scope here, so these repeat the same hex
+   values as the #app[data-page=...] overrides above. Skipped when locked
+   (:not(.locked)) so a fully inaccessible page stays muted grey. */
+.home-links a[data-id="survival"]:not(.locked) {
+  color: #d98a3f;
+  border-left-color: #a05f26;
+}
+
+.home-links a[data-id="survival"]:not(.locked):hover,
+.home-links a[data-id="survival"]:not(.locked):focus-visible {
+  color: #d98a3f;
+  border-left-color: #d98a3f;
+  box-shadow: 0 0 12px rgba(217, 138, 63, 0.25);
+}
+
+.home-links a[data-id="technical"]:not(.locked) {
+  color: #3fb6c4;
+  border-left-color: #256e79;
+}
+
+.home-links a[data-id="technical"]:not(.locked):hover,
+.home-links a[data-id="technical"]:not(.locked):focus-visible {
+  color: #3fb6c4;
+  border-left-color: #3fb6c4;
+  box-shadow: 0 0 12px rgba(63, 182, 196, 0.25);
+}
+
+.home-links a[data-id="tactical"]:not(.locked) {
+  color: var(--accent);
+}
+
 /* -- Pack tiers (Emergency Packs) -- */
 .pack-tier-nav {
   display: flex;
