@@ -495,29 +495,34 @@ function writeCredentialsFile(secrets) {
   log('Wrote CREDENTIALS.txt (private, gitignored) with all generated codes.');
 }
 
-function encryptPageContent(pageKey, page) {
-  const payload = JSON.stringify({ title: page.title, subpages: page.subpages });
-  const { iv, ct } = aesGcmEncrypt(pageKey, Buffer.from(payload, 'utf8'));
+function encryptSubpageContent(subKey, subpage) {
+  const { iv, ct } = aesGcmEncrypt(subKey, Buffer.from(subpage.content, 'utf8'));
   return { iv, ct };
 }
 
-function wrapKeyForPasscode(pageKey, passcode, baseSalt, context) {
+function wrapKeyForPasscode(subKey, passcode, baseSalt, context) {
   const salt = contextSalt(baseSalt, context);
   const kek = deriveKey(passcode, salt);
-  const { iv, ct } = aesGcmEncrypt(kek, pageKey);
+  const { iv, ct } = aesGcmEncrypt(kek, subKey);
   return { context, iv, ct };
 }
 
 // Users authenticate with a username + passcode pair. Both must be exactly
 // right: the derivation key is "username:passcode", not just the passcode,
 // so knowing one user's passcode (or seeing another user's username in a
-// page's wrapped-entry list) doesn't help unlock a different user's login.
-function wrapKeyForUser(pageKey, user, baseSalt) {
-  return wrapKeyForPasscode(pageKey, user.username + ':' + user.passcode, baseSalt, 'user:' + user.username);
+// sub-page's wrapped-entry list) doesn't help unlock a different user's login.
+function wrapKeyForUser(subKey, user, baseSalt) {
+  return wrapKeyForPasscode(subKey, user.username + ':' + user.passcode, baseSalt, 'user:' + user.username);
 }
 
-function userGrantsPage(user, pageId) {
-  return user.allPages === true || (Array.isArray(user.pages) && user.pages.includes(pageId));
+// Access is granted per sub-page. A user's "pages" entries can be either a
+// whole page id ("survival", granting every sub-page under it) or a single
+// sub-page scoped as "pageId:subpageId" (e.g. "survival:emergency-packs",
+// granting only that one tab).
+function userGrantsSubpage(user, pageId, subpageId) {
+  if (user.allPages === true) return true;
+  if (!Array.isArray(user.pages)) return false;
+  return user.pages.includes(pageId) || user.pages.includes(pageId + ':' + subpageId);
 }
 
 function buildTotpWrappedEntries(pageKey, baseSalt, totpConfig) {
@@ -565,7 +570,7 @@ function main() {
 
   // Synthesized fresh from secrets.users on every build -- not something you
   // edit directly in secrets.json's pages array. Access follows the normal
-  // userGrantsPage() rule below, so only allPages users see it by default.
+  // userGrantsSubpage() rule below, so only allPages users see it by default.
   const adminPage = {
     id: 'admin',
     title: 'Admin',
@@ -587,42 +592,44 @@ function main() {
   const manifest = [];
 
   for (const page of secrets.pages) {
-    const baseSalt = randomSalt(16);
-    const pageKey = randomKey();
-
-    const content = encryptPageContent(pageKey, page);
-
-    const wrapped = [];
-    for (const user of secrets.users || []) {
-      if (userGrantsPage(user, page.id)) {
-        wrapped.push(wrapKeyForUser(pageKey, user, baseSalt));
-      }
-    }
-
     const totpGrantsThisPage =
       secrets.totp &&
       secrets.totp.base32Secret &&
       (secrets.totp.accessAllPages !== false) &&
       (!secrets.totp.pages || secrets.totp.pages.includes(page.id));
-    if (totpGrantsThisPage) {
-      wrapped.push(...buildTotpWrappedEntries(pageKey, baseSalt, secrets.totp));
-    }
 
-    const pageOut = {
-      id: page.id,
-      title: page.title,
-      salt: baseSalt.toString('base64'),
-      content,
-      wrapped,
-      // Sub-page id/title only (no content) is public, same as the page's own
-      // id/title in manifest.json -- lets a locked-out viewer see a page's
-      // tab labels without being able to decrypt what's under them.
-      subpageMeta: (page.subpages || []).map((s) => ({ id: s.id, title: s.title })),
-    };
+    // Each sub-page gets its own random key, salt, and wrapped-entry list, so
+    // access can be scoped down to a single tab rather than the whole page --
+    // only sub-page id/title stay public (same idea as page id/title in
+    // manifest.json), letting a locked-out viewer see tab labels without
+    // being able to decrypt what's under them.
+    const subpagesOut = (page.subpages || []).map((subpage) => {
+      const baseSalt = randomSalt(16);
+      const subKey = randomKey();
+      const content = encryptSubpageContent(subKey, subpage);
+
+      const wrapped = [];
+      for (const user of secrets.users || []) {
+        if (userGrantsSubpage(user, page.id, subpage.id)) {
+          wrapped.push(wrapKeyForUser(subKey, user, baseSalt));
+        }
+      }
+      if (totpGrantsThisPage) {
+        wrapped.push(...buildTotpWrappedEntries(subKey, baseSalt, secrets.totp));
+      }
+
+      return {
+        id: subpage.id,
+        title: subpage.title,
+        salt: baseSalt.toString('base64'),
+        content,
+        wrapped,
+      };
+    });
 
     fs.writeFileSync(
       path.join(DIST_DIR, 'pages', page.id + '.json'),
-      JSON.stringify(pageOut)
+      JSON.stringify({ id: page.id, title: page.title, subpages: subpagesOut })
     );
 
     manifest.push({ id: page.id, title: page.title });

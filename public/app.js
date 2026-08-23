@@ -48,44 +48,59 @@ async function aesGcmDecryptToBytes(key, ivB64, ctB64) {
   return new Uint8Array(ptBuf);
 }
 
-// Decrypts a page's content using an already-derived key-encryption-key
-// against one specific wrapped entry. Returns {title, subpages} on success,
-// or null if that entry doesn't unwrap with this key (wrong secret).
-async function tryWrappedEntry(kek, wrapped, pageData) {
+// Decrypts one sub-page's content using an already-derived key-encryption-key
+// against one specific wrapped entry. Returns the plaintext HTML string on
+// success, or null if that entry doesn't unwrap with this key (wrong secret).
+// Access is granted per sub-page, not per page -- each sub-page has its own
+// key and its own wrapped-entry list, so a login can be scoped to exactly
+// one tab within a page.
+async function tryUnwrapSubpage(kek, wrapped, subpage) {
   try {
-    const pageKeyBytes = await aesGcmDecryptToBytes(kek, wrapped.iv, wrapped.ct);
-    const pageKey = await crypto.subtle.importKey('raw', pageKeyBytes, { name: 'AES-GCM' }, false, ['decrypt']);
-    const contentBytes = await aesGcmDecryptToBytes(pageKey, pageData.content.iv, pageData.content.ct);
-    return JSON.parse(new TextDecoder().decode(contentBytes));
+    const subKeyBytes = await aesGcmDecryptToBytes(kek, wrapped.iv, wrapped.ct);
+    const subKey = await crypto.subtle.importKey('raw', subKeyBytes, { name: 'AES-GCM' }, false, ['decrypt']);
+    const contentBytes = await aesGcmDecryptToBytes(subKey, subpage.content.iv, subpage.content.ct);
+    return new TextDecoder().decode(contentBytes);
   } catch (e) {
     return null;
   }
 }
 
-// Username+passcode login: only bothers trying the one wrapped entry that
-// was built for this exact username (if this page grants it access at all),
-// deriving the key from "username:passcode" together -- both must be right.
+// Username+passcode login: for each sub-page, only bothers trying the one
+// wrapped entry built for this exact username (if that sub-page grants it
+// access at all), deriving the key from "username:passcode" together -- both
+// must be right. Returns the subset of sub-pages this login can decrypt.
 async function tryUnlockPageAsUser(username, passcode, pageData) {
-  const wrapped = pageData.wrapped.find((w) => w.context === 'user:' + username);
-  if (!wrapped) return null;
-  const baseSalt = b64ToBytes(pageData.salt);
-  const salt = contextSaltBytes(baseSalt, wrapped.context);
-  const kek = await deriveAesKey(username + ':' + passcode, salt);
-  return tryWrappedEntry(kek, wrapped, pageData);
+  const unlockedSubpages = [];
+  for (const sub of pageData.subpages) {
+    const wrapped = sub.wrapped.find((w) => w.context === 'user:' + username);
+    if (!wrapped) continue;
+    const baseSalt = b64ToBytes(sub.salt);
+    const salt = contextSaltBytes(baseSalt, wrapped.context);
+    const kek = await deriveAesKey(username + ':' + passcode, salt);
+    const html = await tryUnwrapSubpage(kek, wrapped, sub);
+    if (html !== null) unlockedSubpages.push({ id: sub.id, title: sub.title, content: html });
+  }
+  return unlockedSubpages;
 }
 
 // Rotating-code login (no username): tries the passcode alone against each
-// totp: entry (one per tolerated time window).
+// sub-page's totp: entries (one per tolerated time window).
 async function tryUnlockPageAsTotp(passcode, pageData) {
-  const baseSalt = b64ToBytes(pageData.salt);
-  for (const w of pageData.wrapped) {
-    if (!w.context.startsWith('totp:')) continue;
-    const salt = contextSaltBytes(baseSalt, w.context);
-    const kek = await deriveAesKey(passcode, salt);
-    const result = await tryWrappedEntry(kek, w, pageData);
-    if (result) return result;
+  const unlockedSubpages = [];
+  for (const sub of pageData.subpages) {
+    const baseSalt = b64ToBytes(sub.salt);
+    for (const w of sub.wrapped) {
+      if (!w.context.startsWith('totp:')) continue;
+      const salt = contextSaltBytes(baseSalt, w.context);
+      const kek = await deriveAesKey(passcode, salt);
+      const html = await tryUnwrapSubpage(kek, w, sub);
+      if (html !== null) {
+        unlockedSubpages.push({ id: sub.id, title: sub.title, content: html });
+        break;
+      }
+    }
   }
-  return null;
+  return unlockedSubpages;
 }
 
 async function attemptUnlock(username, passcode) {
@@ -101,18 +116,19 @@ async function attemptUnlock(username, passcode) {
     manifest.map(async (entry) => {
       const res = await fetch('pages/' + entry.id + '.json', { cache: 'no-store' });
       const pageData = await res.json();
-      const result = useUsername
+      const unlockedSubpages = useUsername
         ? await tryUnlockPageAsUser(username.trim(), passcode, pageData)
         : await tryUnlockPageAsTotp(passcode, pageData);
-      return { id: entry.id, result, subpageMeta: pageData.subpageMeta || [] };
+      const subpageMeta = pageData.subpages.map((s) => ({ id: s.id, title: s.title }));
+      return { id: entry.id, title: pageData.title, unlockedSubpages, subpageMeta };
     })
   );
 
   const unlocked = {};
   const pageMeta = {};
-  for (const { id, result, subpageMeta } of results) {
-    if (result) unlocked[id] = result;
+  for (const { id, title, unlockedSubpages, subpageMeta } of results) {
     pageMeta[id] = subpageMeta;
+    if (unlockedSubpages.length > 0) unlocked[id] = { title, subpages: unlockedSubpages };
   }
   return { unlocked, manifest, pageMeta };
 }
@@ -187,13 +203,19 @@ function renderApp(state) {
 
   const CLEARANCE_CODES = { survival: 'SURV', technical: 'TECH', tactical: 'TAC' };
 
-  function clearanceMessage(id) {
-    const code = CLEARANCE_CODES[id];
-    return code ? 'You do not have ' + code + ' clearance.' : 'You do not have clearance for ' + titleById[id] + '.';
+  // A page can now be partially unlocked (some sub-tabs visible, others not),
+  // so the message differs: no access to the page at all uses the short
+  // clearance-code phrasing; missing just one sub-tab names that sub-tab.
+  function clearanceMessage(pageId, subTitle, hasPageAccess) {
+    if (!hasPageAccess) {
+      const code = CLEARANCE_CODES[pageId];
+      return code ? 'You do not have ' + code + ' clearance.' : 'You do not have clearance for ' + titleById[pageId] + '.';
+    }
+    return 'You do not have clearance for ' + subTitle + '.';
   }
 
-  function showAccessDenied(id) {
-    modalMessage.textContent = clearanceMessage(id);
+  function showAccessDenied(message) {
+    modalMessage.textContent = message;
     modal.hidden = false;
   }
 
@@ -244,17 +266,21 @@ function renderApp(state) {
     const activeMeta = meta.find((s) => s.id === activeId);
     const subHeaderHtml = activeMeta ? '<h3 class="subpage-title">' + activeMeta.title + '</h3>\n' : '';
 
-    if (!page) {
-      content.innerHTML = '<h2>' + titleById[pageId] + '</h2>\n' + tabsHtml + subHeaderHtml;
+    // "page" exists whenever the login unlocks at least one sub-tab here, but
+    // that doesn't mean this specific sub-tab is one of them -- check both.
+    const activeSub = page && page.subpages.find((s) => s.id === activeId);
+
+    if (!activeSub) {
+      const heading = page ? page.title : titleById[pageId];
+      content.innerHTML = '<h2>' + heading + '</h2>\n' + tabsHtml + subHeaderHtml;
       wireSubtabClicks(pageId);
-      showAccessDenied(pageId);
+      showAccessDenied(clearanceMessage(pageId, activeMeta && activeMeta.title, !!page));
       return;
     }
 
-    const active = page.subpages.find((s) => s.id === activeId) || page.subpages[0];
     content.innerHTML =
       '<h2>' + page.title + '</h2>\n' + tabsHtml + subHeaderHtml +
-      '<div class="subpage-body">' + active.content + '</div>';
+      '<div class="subpage-body">' + activeSub.content + '</div>';
     wireSubtabClicks(pageId);
     wirePackTiers();
   }

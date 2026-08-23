@@ -9,12 +9,13 @@ just a static site you deploy to GitHub Pages or Vercel.
 There are two ways in:
 
 1. **Username + passcode.** Each person has their own login, and their own
-   list of pages they're cleared for (`pages: ["survival"]`), or full access
-   (`allPages: true`). Both the username and passcode must be exactly right --
-   the decryption key is derived from the two together, not the passcode alone.
-   Someone with a valid login always sees every page in the menu, but a page
-   they're not cleared for shows an "Access Denied" prompt instead of its
-   content when they try to open it.
+   list of tabs they're cleared for -- a whole page (`pages: ["survival"]`), a
+   single tab within a page (`pages: ["survival:emergency-packs"]`), or full
+   access (`allPages: true`). Both the username and passcode must be exactly
+   right -- the decryption key is derived from the two together, not the
+   passcode alone. Someone with a valid login always sees every page and tab
+   in the menu, but a tab they're not cleared for shows an "Access Denied"
+   prompt instead of its content when they try to open it.
 2. **Rotating code.** A 6-digit code that changes every 30 minutes, generated the
    same way a 2FA app generates codes (TOTP, RFC 6238). Leave the username field
    blank and enter it in the passcode field. It unlocks every page, but only for
@@ -83,12 +84,19 @@ with Claude) edit `secrets.json` and rebuild.
 Each entry in the `users` array in `secrets.json` is one login:
 
 ```json
-{ "username": "alice", "passcode": "...", "pages": ["survival", "tactical"] }
+{ "username": "alice", "passcode": "...", "pages": ["survival", "tactical:armory"] }
 ```
 
-- `pages` is the list of page `id`s that user can see the content of. Everyone
-  sees every page in the menu regardless; pages outside their `pages` list show
-  an "Access Denied" message instead of content.
+- Access is granted per **sub-page** (tab), not just per page. Each entry in
+  `pages` is either a whole page id (`"survival"`, granting every tab under
+  it) or a single tab scoped as `"pageId:subpageId"` (e.g.
+  `"survival:emergency-packs"`, granting only that one tab and nothing else
+  under Survival).
+- Everyone sees every page and every tab label in the menu regardless of
+  access -- tabs outside a login's grants show an "Access Denied" message
+  instead of content when clicked, naming that specific tab. A page with
+  *no* granted tabs at all shows as fully "LOCKED" in the nav; a page with
+  *some* granted tabs shows normally, with only the ungranted tabs denied.
 - Use `"allPages": true` instead of `pages` for a login that should see
   everything (like the bootstrapped `admin` user) -- this way you don't have to
   update every admin-level login when you add a new page.
