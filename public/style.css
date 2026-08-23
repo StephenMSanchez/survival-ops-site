@@ -527,33 +527,35 @@ button:hover {
    its heading/active-tab color once you're inside it), not the home view's
    default green -- since #app has no [data-page] while home is showing, the
    colorway CSS vars aren't in scope here, so these repeat the same hex
-   values as the #app[data-page=...] overrides above. Skipped when locked
-   (:not(.locked)) so a fully inaccessible page stays muted grey. */
-.home-links a[data-id="survival"]:not(.locked) {
+   values as the #app[data-page=...] overrides above. Applies regardless of
+   lock status -- the LOCKED/LIMITED badge (added elsewhere) is what conveys
+   access, not muted color, so these come after .home-links a.locked in the
+   cascade to win the tie. */
+.home-links a[data-id="survival"] {
   color: #d98a3f;
   border-left-color: #a05f26;
 }
 
-.home-links a[data-id="survival"]:not(.locked):hover,
-.home-links a[data-id="survival"]:not(.locked):focus-visible {
+.home-links a[data-id="survival"]:hover,
+.home-links a[data-id="survival"]:focus-visible {
   color: #d98a3f;
   border-left-color: #d98a3f;
   box-shadow: 0 0 12px rgba(217, 138, 63, 0.25);
 }
 
-.home-links a[data-id="technical"]:not(.locked) {
+.home-links a[data-id="technical"] {
   color: #3fb6c4;
   border-left-color: #256e79;
 }
 
-.home-links a[data-id="technical"]:not(.locked):hover,
-.home-links a[data-id="technical"]:not(.locked):focus-visible {
+.home-links a[data-id="technical"]:hover,
+.home-links a[data-id="technical"]:focus-visible {
   color: #3fb6c4;
   border-left-color: #3fb6c4;
   box-shadow: 0 0 12px rgba(63, 182, 196, 0.25);
 }
 
-.home-links a[data-id="tactical"]:not(.locked) {
+.home-links a[data-id="tactical"] {
   color: var(--accent);
 }
 
