@@ -234,7 +234,12 @@ function renderApp(state) {
   // A page can now be partially unlocked (some sub-tabs visible, others not),
   // so the message differs: no access to the page at all uses the short
   // clearance-code phrasing; missing just one sub-tab names that sub-tab.
+  // Every Training Schedule page/tab uses one uniform message instead,
+  // regardless of which one or whether it's whole-page or single-tab denial.
   function clearanceMessage(pageId, subTitle, hasPageAccess) {
+    if (groupById[pageId] === 'training') {
+      return 'You do not have TRAINING clearance.';
+    }
     if (!hasPageAccess) {
       const code = CLEARANCE_CODES[pageId];
       return code ? 'You do not have ' + code + ' clearance.' : 'You do not have clearance for ' + titleById[pageId] + '.';
