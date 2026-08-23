@@ -197,13 +197,112 @@ const DEFAULT_PAGES = [
     title: 'Technical',
     subpages: [
       {
-        id: 'comms',
-        title: 'Comms',
+        id: 'radio-comms',
+        title: 'Radio Comms',
         content:
           '<p><em>Placeholder page. Replace this with your own reference material.</em></p>\n' +
           '<ul>\n' +
-          '  <li>Communication plan: primary/backup channels, check-in schedule</li>\n' +
-          '  <li>Code words / call signs (if used)</li>\n' +
+          '  <li>Frequency plan and channel assignments</li>\n' +
+          '  <li>License requirements: HAM, GMRS, etc.</li>\n' +
+          '  <li>Base/mobile/handheld radio inventory</li>\n' +
+          '  <li>Antenna setups and range considerations</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'sat-comms',
+        title: 'Sat Comms',
+        content:
+          '<ul>\n' +
+          '  <li>Satellite phone/messenger inventory (Garmin inReach, Iridium, etc.)</li>\n' +
+          '  <li>Coverage areas and subscription status</li>\n' +
+          '  <li>Emergency SOS procedures</li>\n' +
+          '  <li>Backup power for sat devices</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'sigint',
+        title: 'SIG.INT',
+        content:
+          '<ul>\n' +
+          '  <li>SDR (software-defined radio) setup and scanning</li>\n' +
+          '  <li>Frequency monitoring equipment</li>\n' +
+          '  <li>Signal logging and analysis tools</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'cybersec',
+        title: 'CyberSec',
+        content:
+          '<ul>\n' +
+          '  <li>Device hardening checklist</li>\n' +
+          '  <li>Password/passphrase management</li>\n' +
+          '  <li>VPN and network security</li>\n' +
+          '  <li>Backup and recovery procedures</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'diy-cell-network',
+        title: 'DIY Cell Tower/Network',
+        content:
+          '<ul>\n' +
+          '  <li>Mesh network options (goTenna, Meshtastic, etc.)</li>\n' +
+          '  <li>Local/offline network setup</li>\n' +
+          '  <li>Legal considerations</li>\n' +
+          '  <li>Range and node placement</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'encryption',
+        title: 'Encryption',
+        content:
+          '<ul>\n' +
+          '  <li>File and disk encryption tools</li>\n' +
+          '  <li>Secure messaging apps</li>\n' +
+          '  <li>Key management and backup</li>\n' +
+          '  <li>PGP/GPG basics</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'flock-tracker',
+        title: 'Flock Tracker',
+        content:
+          '<ul>\n' +
+          '  <li>Known ALPR/Flock camera locations</li>\n' +
+          '  <li>Route planning and situational awareness</li>\n' +
+          '  <li>Community-maintained tracking resources</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'flipperzero',
+        title: 'FlipperZero',
+        content:
+          '<ul>\n' +
+          '  <li>Device capabilities overview</li>\n' +
+          '  <li>Firmware and app management</li>\n' +
+          '  <li>Use cases: RFID/NFC, sub-GHz, infrared</li>\n' +
+          '  <li>Legal/ethical considerations</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'design-files-3d',
+        title: '3D-Print Design Files',
+        content:
+          '<ul>\n' +
+          '  <li>File library organization</li>\n' +
+          '  <li>Printer settings and materials</li>\n' +
+          '  <li>Priority print list</li>\n' +
+          '  <li>Repair/replacement parts</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'cyberdeck',
+        title: 'CyberDeck',
+        content:
+          '<ul>\n' +
+          '  <li>Build specs and components</li>\n' +
+          '  <li>Software loadout</li>\n' +
+          '  <li>Power management and battery life</li>\n' +
+          '  <li>Use cases in the field</li>\n' +
           '</ul>',
       },
     ],
