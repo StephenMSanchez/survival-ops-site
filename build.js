@@ -426,12 +426,11 @@ const DEFAULT_PAGES = [
     group: 'training',
     subpages: [
       {
-        id: 'desert-survival-camp',
-        title: 'Desert Survival Camp (9/4–9/7)',
+        id: 'big-game-tracking-hunting',
+        title: 'Big Game Tracking & Hunting (10/24)',
         content:
-          '<p><em>Placeholder page. Replace this with your own reference material.</em></p>\n' +
           '<ul>\n' +
-          '  <li>Dates: 9/4 – 9/7</li>\n' +
+          '  <li>Date: 10/24</li>\n' +
           '  <li>Objectives</li>\n' +
           '  <li>Prerequisites</li>\n' +
           '  <li>Required gear</li>\n' +
@@ -439,11 +438,11 @@ const DEFAULT_PAGES = [
           '</ul>',
       },
       {
-        id: 'big-game-tracking-hunting',
-        title: 'Big Game Tracking & Hunting (10/24)',
+        id: 'winter-alpine-survival-camp',
+        title: 'Winter Alpine Survival Camp (1/29/27–1/31/27)',
         content:
           '<ul>\n' +
-          '  <li>Date: 10/24</li>\n' +
+          '  <li>Dates: 1/29/27 – 1/31/27</li>\n' +
           '  <li>Objectives</li>\n' +
           '  <li>Prerequisites</li>\n' +
           '  <li>Required gear</li>\n' +
@@ -458,11 +457,11 @@ const DEFAULT_PAGES = [
     group: 'training',
     subpages: [
       {
-        id: 'basic-comms',
-        title: 'Basic Comms (9/19)',
+        id: 'decentralized-comms-sitrep',
+        title: 'Decentralized Comms & SITREP (11/21)',
         content:
           '<ul>\n' +
-          '  <li>Date: 9/19</li>\n' +
+          '  <li>Date: 11/21</li>\n' +
           '  <li>Objectives</li>\n' +
           '  <li>Prerequisites</li>\n' +
           '  <li>Required gear</li>\n' +
@@ -477,11 +476,35 @@ const DEFAULT_PAGES = [
     group: 'training',
     subpages: [
       {
-        id: 'concealed-carry-concepts',
-        title: 'Concealed Carry Concepts (8/29–8/30)',
+        id: 'dynamic-aerial-rifle-engagements',
+        title: 'Dynamic Aerial Rifle Engagements (11/06)',
         content:
           '<ul>\n' +
-          '  <li>Dates: 8/29 – 8/30</li>\n' +
+          '  <li>Date: 11/06</li>\n' +
+          '  <li>Objectives</li>\n' +
+          '  <li>Prerequisites</li>\n' +
+          '  <li>Required gear</li>\n' +
+          '  <li>Location / RV point</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'mil-free-fall-school',
+        title: 'Mil. Free Fall School (11/07)',
+        content:
+          '<ul>\n' +
+          '  <li>Date: 11/07</li>\n' +
+          '  <li>Objectives</li>\n' +
+          '  <li>Prerequisites</li>\n' +
+          '  <li>Required gear</li>\n' +
+          '  <li>Location / RV point</li>\n' +
+          '</ul>',
+      },
+      {
+        id: 'concealed-carry-concepts',
+        title: 'Concealed Carry Concepts (11/15)',
+        content:
+          '<ul>\n' +
+          '  <li>Date: 11/15</li>\n' +
           '  <li>Objectives</li>\n' +
           '  <li>Prerequisites</li>\n' +
           '  <li>Required gear</li>\n' +
@@ -496,11 +519,11 @@ const DEFAULT_PAGES = [
     group: 'training',
     subpages: [
       {
-        id: 'high-angle-rescue',
-        title: 'High Angle Rescue (9/12)',
+        id: 'aerial-hoist',
+        title: 'Aerial Hoist (10/18)',
         content:
           '<ul>\n' +
-          '  <li>Date: 9/12</li>\n' +
+          '  <li>Date: 10/18</li>\n' +
           '  <li>Objectives</li>\n' +
           '  <li>Prerequisites</li>\n' +
           '  <li>Required gear</li>\n' +
@@ -508,11 +531,11 @@ const DEFAULT_PAGES = [
           '</ul>',
       },
       {
-        id: 'aerial-hoist',
-        title: 'Aerial Hoist (10/18)',
+        id: 'high-angle-rescue',
+        title: 'High Angle Rescue (12/05)',
         content:
           '<ul>\n' +
-          '  <li>Date: 10/18</li>\n' +
+          '  <li>Date: 12/05</li>\n' +
           '  <li>Objectives</li>\n' +
           '  <li>Prerequisites</li>\n' +
           '  <li>Required gear</li>\n' +
