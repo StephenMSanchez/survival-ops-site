@@ -426,18 +426,6 @@ const DEFAULT_PAGES = [
     group: 'training',
     subpages: [
       {
-        id: 'big-game-tracking-hunting',
-        title: 'Big Game Tracking & Hunting (10/24)',
-        content:
-          '<ul>\n' +
-          '  <li>Date: 10/24</li>\n' +
-          '  <li>Objectives</li>\n' +
-          '  <li>Prerequisites</li>\n' +
-          '  <li>Required gear</li>\n' +
-          '  <li>Location / RV point</li>\n' +
-          '</ul>',
-      },
-      {
         id: 'winter-alpine-survival-camp',
         title: 'Winter Alpine Survival Camp (1/29/27–1/31/27)',
         content:
@@ -518,18 +506,6 @@ const DEFAULT_PAGES = [
     title: 'Rescue',
     group: 'training',
     subpages: [
-      {
-        id: 'aerial-hoist',
-        title: 'Aerial Hoist (10/18)',
-        content:
-          '<ul>\n' +
-          '  <li>Date: 10/18</li>\n' +
-          '  <li>Objectives</li>\n' +
-          '  <li>Prerequisites</li>\n' +
-          '  <li>Required gear</li>\n' +
-          '  <li>Location / RV point</li>\n' +
-          '</ul>',
-      },
       {
         id: 'high-angle-rescue',
         title: 'High Angle Rescue (12/05)',
