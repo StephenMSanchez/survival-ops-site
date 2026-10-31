@@ -426,6 +426,18 @@ const DEFAULT_PAGES = [
     group: 'training',
     subpages: [
       {
+        id: 'winter-firecraft',
+        title: 'Winter Firecraft (1/16/27)',
+        content:
+          '<ul>\n' +
+          '  <li>Date: 1/16/27</li>\n' +
+          '  <li>Objectives</li>\n' +
+          '  <li>Prerequisites</li>\n' +
+          '  <li>Required gear</li>\n' +
+          '  <li>Location / RV point</li>\n' +
+          '</ul>',
+      },
+      {
         id: 'winter-alpine-survival-camp',
         title: 'Winter Alpine Survival Camp (1/29/27–1/31/27)',
         content:
